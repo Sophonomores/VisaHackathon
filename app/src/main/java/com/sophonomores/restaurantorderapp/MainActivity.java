@@ -1,68 +1,41 @@
 package com.sophonomores.restaurantorderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.services.Advertiser;
+import com.sophonomores.restaurantorderapp.services.Discoverer;
 
-public class MainActivity extends AppCompatActivity implements RestaurantAdapter.ItemClickListener {
-
-    private static OrderManager orderManager;
-
-    private RecyclerView restaurantRecyclerView;
-    private RecyclerView.Adapter restaurantViewAdapter;
-    private RecyclerView.LayoutManager restaurantLayoutManager;
-
-    public static final String RESTAURANT_INDEX = "RESTAURANT_INDEX";
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        UserProfile user = new UserProfile("username"); // hardcoded
-        orderManager = new OrderManager(user);
-        getSupportActionBar().setSubtitle("Eateries near me");
-
-        prepareRestaurantRecyclerView();
+        requestPermissions(new String[] {
+                Manifest.permission.BLUETOOTH,
+                Manifest.permission.BLUETOOTH_ADMIN,
+                Manifest.permission.ACCESS_WIFI_STATE,
+                Manifest.permission.CHANGE_WIFI_STATE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+        }, 1);
     }
 
-    public static OrderManager getOrderManager() {
-        return orderManager;
-    }
-
-    private void prepareRestaurantRecyclerView() {
-        restaurantRecyclerView = (RecyclerView) findViewById(R.id.restaurant_recycler_view);
-
-        // add divider
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(restaurantRecyclerView.getContext(),
-                                          LinearLayoutManager.VERTICAL);
-        restaurantRecyclerView.addItemDecoration(dividerItemDecoration);
-
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        restaurantRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        restaurantLayoutManager = new LinearLayoutManager(this);
-        restaurantRecyclerView.setLayoutManager(restaurantLayoutManager);
-
-        // specify an adapter
-        restaurantViewAdapter = new RestaurantAdapter(this, orderManager.getRestaurantList());
-        ((RestaurantAdapter) restaurantViewAdapter).setClickListener(this);
-        restaurantRecyclerView.setAdapter(restaurantViewAdapter);
-    }
-
-    public void onItemClick(View view, int position) {
-        Intent intent = new Intent(this, MenuActivity.class);
-        intent.putExtra(RESTAURANT_INDEX, position);
+    public void goToCustomerMainActivity(View view) {
+        Intent intent = new Intent(this, CustomerMainActivity.class);
         startActivity(intent);
+//        new Discoverer(MainActivity.this).startDiscovery();
     }
+
+    public void goToMerchantMainActivity(View view) {
+        // TODO: to be implemented
+//        new Advertiser(MainActivity.this).startAdvertising();
+    }
+
 }
