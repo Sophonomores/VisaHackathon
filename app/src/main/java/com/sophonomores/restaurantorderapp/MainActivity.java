@@ -7,9 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.sophonomores.restaurantorderapp.services.Advertiser;
-import com.sophonomores.restaurantorderapp.services.Discoverer;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -35,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToMerchantMainActivity(View view) {
         // TODO: to be implemented
+        Intent intent = new Intent(this, MerchantMainActivity.class);
+        startActivity(intent);
 //        new Advertiser(MainActivity.this).startAdvertising();
     }
 

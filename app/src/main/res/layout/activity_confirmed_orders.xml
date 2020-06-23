@@ -4,18 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CartActivity">
+    tools:context=".ConfirmedOrdersActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cart_dishes_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <Button
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pay Now"
-        android:onClick="goToPayment"
+        android:text="View confirmed orders here"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:id="@+id/view_restaurants_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Order more food!"
+        android:onClick="goToCustomerMainActivity"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

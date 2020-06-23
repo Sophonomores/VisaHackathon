@@ -24,4 +24,26 @@ public class ShoppingCart {
     public void addDish(Dish dish) {
         dishes.add(dish);
     }
+
+    public void removeDish(Dish dish) {
+        dishes.remove(dish);
+    }
+
+    public Dish removeDishAtIndex(int index) {
+        return dishes.remove(index);
+    }
+
+    public void clear() {
+        dishes = new ArrayList<>();
+    }
+
+    // for testing
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Dish dish : dishes) {
+            sb.append(dish.getName() + "\n");
+        }
+
+        return sb.toString();
+    }
 }

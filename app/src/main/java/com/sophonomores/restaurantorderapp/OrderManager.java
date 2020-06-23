@@ -5,22 +5,68 @@ import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class OrderManager {
+/**
+ * This class handles the main business logic of the customer app.
+ * View (various Activity classes) should access the app through this class.
+ */
+public class OrderManager implements DataSource.RestaurantsChangeListener {
+
+    // enforce Singleton pattern
+    private static OrderManager instance;
 
     private List<Restaurant> restaurantList;
     private UserProfile user;
     private ShoppingCart cart;
+    private DataSource dataSource;
 
-    public OrderManager(UserProfile user) {
-        this.restaurantList = new DataSource().getRestaurantData();
-        this.user = user;
+    // register observer
+    private RestaurantsChangeListener listener;
+
+    private OrderManager() {
+        this.dataSource = new DataSource();
+        //this.restaurantList = dataSource.getRestaurantData();
+        this.restaurantList = new ArrayList<>();
+        this.user = null;
         this.cart = new ShoppingCart();
+    }
+
+    public void startSearchingForRestaurants() {
+        dataSource.setRestaurantsChangeListener(this);
+        dataSource.getListOfNearbyRestaurants();
+    }
+
+    public static OrderManager init(UserProfile user) {
+        instance = new OrderManager();
+        instance.user = user;
+        return instance;
+    }
+
+    public static OrderManager getInstance() {
+        if (instance == null) {
+            instance = new OrderManager();
+        }
+
+        return instance;
+    }
+
+    public static boolean isInitialised() {
+        return instance != null;
     }
 
     public List<Restaurant> getRestaurantList() {
         return restaurantList;
+    }
+
+    public void setRestaurantList(List<Restaurant> restaurantList) {
+        if (this.restaurantList == null) {
+            this.restaurantList = new ArrayList<>();
+        }
+        // to keep any existing references to this list referring to the correct list
+        this.restaurantList.clear();
+        this.restaurantList.addAll(restaurantList);
     }
 
     public UserProfile getUser() {
@@ -35,4 +81,28 @@ public class OrderManager {
         cart.addDish(dish);
     }
 
+    public void removeDishFromCart(Dish dish) {
+        cart.removeDish(dish);
+    }
+
+    public void clearShoppingCart() {
+        cart.clear();
+    }
+
+    public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {
+        this.listener = listener;
+    }
+
+    @Override
+    public void onRestaurantsChange(List<Restaurant> restaurants) {
+        setRestaurantList(restaurants);
+        // update UI that observes this OrderManager class
+        listener.onRestaurantsChange(restaurants);
+    }
+
+    // This interface is to register UI to observer changes in the list of restaurants in
+    // OrderManager class.
+    public interface RestaurantsChangeListener {
+        void onRestaurantsChange(List<Restaurant> restaurants);
+    }
 }

@@ -9,11 +9,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
-public class CustomerMainActivity extends AppCompatActivity implements RestaurantAdapter.ItemClickListener {
+import java.util.List;
 
-    private static OrderManager orderManager;
+public class CustomerMainActivity extends AppCompatActivity
+        implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
+
+    private OrderManager orderManager;
 
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
@@ -27,14 +31,18 @@ public class CustomerMainActivity extends AppCompatActivity implements Restauran
         setContentView(R.layout.activity_main_customer);
 
         UserProfile user = new UserProfile("username"); // hardcoded
-        orderManager = new OrderManager(user);
+
+        if (OrderManager.isInitialised()) {
+            orderManager = OrderManager.getInstance();
+        } else {
+            orderManager = OrderManager.init(user);
+        }
+
         getSupportActionBar().setSubtitle("Eateries near me");
-
         prepareRestaurantRecyclerView();
-    }
 
-    public static OrderManager getOrderManager() {
-        return orderManager;
+        orderManager.setRestaurantsChangeListener(this);
+        orderManager.startSearchingForRestaurants();
     }
 
     private void prepareRestaurantRecyclerView() {
@@ -65,4 +73,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Restauran
         intent.putExtra(RESTAURANT_INDEX, position);
         startActivity(intent);
     }
+
+    @Override
+    public void onRestaurantsChange(List<Restaurant> restaurants) {
+        restaurantViewAdapter.notifyDataSetChanged();
+    }
+
 }
