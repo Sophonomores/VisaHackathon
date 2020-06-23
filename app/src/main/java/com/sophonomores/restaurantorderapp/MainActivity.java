@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToMerchantMainActivity(View view) {
         // TODO: to be implemented
-        Intent intent = new Intent(this, MerchantActivity.class);
+        Intent intent = new Intent(this, MerchantMainActivity.class);
         startActivity(intent);
     }
 

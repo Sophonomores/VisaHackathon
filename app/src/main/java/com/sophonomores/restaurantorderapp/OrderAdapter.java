@@ -27,7 +27,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     // inflates the row layout from xml when needed
     @Override
     public OrderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.restaurant_recyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.order_recyclerview_row, parent, false);
         return new OrderViewHolder(view);
     }
 
@@ -35,7 +35,10 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     @Override
     public void onBindViewHolder(OrderViewHolder holder, int position) {
         String customerName = mData.get(position).getCustomerName();
-        holder.myTextView.setText(customerName);
+        holder.customerTextView.setText(customerName);
+
+        String dishList = mData.get(position).getDishesString();
+        holder.dishListTextView.setText(dishList);
     }
 
     // total number of rows
@@ -46,11 +49,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
     // stores and recycles views as they are scrolled off screen
     public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+        TextView customerTextView;
+        TextView dishListTextView;
 
         OrderViewHolder(View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.restaurant_name);
+            customerTextView = itemView.findViewById(R.id.user_name);
+            dishListTextView = itemView.findViewById(R.id.dish_list);
             itemView.setOnClickListener(this);
         }
 

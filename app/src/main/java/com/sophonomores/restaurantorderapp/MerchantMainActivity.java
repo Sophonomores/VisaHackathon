@@ -1,6 +1,5 @@
 package com.sophonomores.restaurantorderapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 
-public class MerchantActivity extends AppCompatActivity implements OrderAdapter.ItemClickListener {
+public class MerchantMainActivity extends AppCompatActivity implements OrderAdapter.ItemClickListener {
 
     private static MerchantManager merchantManager;
 
@@ -24,11 +23,11 @@ public class MerchantActivity extends AppCompatActivity implements OrderAdapter.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_merchant);
 
         Restaurant restaurant = new Restaurant("Steak House", "western", null); // hardcoded
         merchantManager = new MerchantManager(restaurant);
-        getSupportActionBar().setSubtitle("Eateries near me");
+        getSupportActionBar().setSubtitle("Confirmed Orders");
 
         prepareOrderRecyclerView();
     }

@@ -19,6 +19,7 @@
         <activity android:name=".CartActivity" />
         <activity android:name=".MenuActivity" />
         <activity android:name=".CustomerMainActivity" />
+        <activity android:name=".MerchantMainActivity" />
     </application>
 
 </manifest>
