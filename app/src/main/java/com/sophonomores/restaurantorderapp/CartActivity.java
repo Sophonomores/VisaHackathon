@@ -29,8 +29,8 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        //orderManager = CustomerMainActivity.getOrderManager();
         orderManager = OrderManager.getInstance();
+
         cart = orderManager.getCart();
 
         getSupportActionBar().setSubtitle("My Shopping Cart");

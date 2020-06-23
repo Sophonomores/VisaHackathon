@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
@@ -32,6 +31,7 @@ public class CustomerMainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main_customer);
 
         UserProfile user = new UserProfile("username"); // hardcoded
+
         if (OrderManager.isInitialised()) {
             orderManager = OrderManager.getInstance();
         } else {
@@ -78,4 +78,5 @@ public class CustomerMainActivity extends AppCompatActivity
     public void onRestaurantsChange(List<Restaurant> restaurants) {
         restaurantViewAdapter.notifyDataSetChanged();
     }
+
 }
