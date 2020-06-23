@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
 public class CustomerMainActivity extends AppCompatActivity implements RestaurantAdapter.ItemClickListener {
 
-    private static OrderManager orderManager;
+    private OrderManager orderManager;
 
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
@@ -27,15 +28,19 @@ public class CustomerMainActivity extends AppCompatActivity implements Restauran
         setContentView(R.layout.activity_main_customer);
 
         UserProfile user = new UserProfile("username"); // hardcoded
-        orderManager = new OrderManager(user);
-        getSupportActionBar().setSubtitle("Eateries near me");
+        if (OrderManager.isInitialised()) {
+            orderManager = OrderManager.getInstance();
+        } else {
+            orderManager = OrderManager.init(user);
+        }
 
+        getSupportActionBar().setSubtitle("Eateries near me");
         prepareRestaurantRecyclerView();
     }
 
-    public static OrderManager getOrderManager() {
-        return orderManager;
-    }
+//    public static OrderManager getOrderManager() {
+//        return orderManager;
+//    }
 
     private void prepareRestaurantRecyclerView() {
         restaurantRecyclerView = (RecyclerView) findViewById(R.id.restaurant_recycler_view);

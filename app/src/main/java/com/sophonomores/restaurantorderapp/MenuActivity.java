@@ -29,7 +29,8 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        orderManager = CustomerMainActivity.getOrderManager();
+        //orderManager = CustomerMainActivity.getOrderManager();
+        orderManager = OrderManager.getInstance();
         Intent intent = getIntent();
         int restaurantIndex = intent.getIntExtra(CustomerMainActivity.RESTAURANT_INDEX, -1);
         Restaurant restaurant = orderManager.getRestaurantList().get(restaurantIndex);

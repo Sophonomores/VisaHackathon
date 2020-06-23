@@ -7,16 +7,41 @@ import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
 import java.util.List;
 
+/**
+ * This class handles the main business logic of the customer app.
+ * View (various Activity classes) should access the app through this class.
+ */
 public class OrderManager {
+
+    // enforce Singleton pattern
+    private static OrderManager instance;
 
     private List<Restaurant> restaurantList;
     private UserProfile user;
     private ShoppingCart cart;
 
-    public OrderManager(UserProfile user) {
+    private OrderManager() {
         this.restaurantList = new DataSource().getRestaurantData();
-        this.user = user;
+        this.user = null;
         this.cart = new ShoppingCart();
+    }
+
+    public static OrderManager init(UserProfile user) {
+        instance = new OrderManager();
+        instance.user = user;
+        return instance;
+    }
+
+    public static OrderManager getInstance() {
+        if (instance == null) {
+            instance = new OrderManager();
+        }
+
+        return instance;
+    }
+
+    public static boolean isInitialised() {
+        return instance != null;
     }
 
     public List<Restaurant> getRestaurantList() {
@@ -37,5 +62,9 @@ public class OrderManager {
 
     public void removeDishFromCart(Dish dish) {
         cart.removeDish(dish);
+    }
+
+    public void clearShoppingCart() {
+        cart.clear();
     }
 }

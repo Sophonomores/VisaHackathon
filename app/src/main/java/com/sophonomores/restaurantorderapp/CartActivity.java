@@ -29,7 +29,8 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        orderManager = CustomerMainActivity.getOrderManager();
+        //orderManager = CustomerMainActivity.getOrderManager();
+        orderManager = OrderManager.getInstance();
         cart = orderManager.getCart();
 
         getSupportActionBar().setSubtitle("My Shopping Cart");
@@ -58,6 +59,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     @Override
     public void onItemClick(View view, int position) {
         Dish dishRemoved = cart.removeDishAtIndex(position);
+        dishAdapter.notifyDataSetChanged();
 
         String dishRemovedText = dishRemoved.getName() + " has been removed from your Cart.";
         Toast.makeText(this, dishRemovedText, Toast.LENGTH_SHORT).show();
