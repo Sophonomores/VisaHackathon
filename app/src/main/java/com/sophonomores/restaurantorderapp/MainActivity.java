@@ -28,14 +28,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToCustomerMainActivity(View view) {
-//        Intent intent = new Intent(this, CustomerMainActivity.class);
-//        startActivity(intent);
-        new Discoverer(MainActivity.this).startDiscovery();
+        Intent intent = new Intent(this, CustomerMainActivity.class);
+        startActivity(intent);
+//        new Discoverer(MainActivity.this).startDiscovery();
     }
 
     public void goToMerchantMainActivity(View view) {
         // TODO: to be implemented
-        new Advertiser(MainActivity.this).startAdvertising();
+//        new Advertiser(MainActivity.this).startAdvertising();
     }
 
 }
