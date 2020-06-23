@@ -26,7 +26,7 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        orderManager = MainActivity.getOrderManager();
+        orderManager = CustomerMainActivity.getOrderManager();
         cart = orderManager.getCart();
 
         getSupportActionBar().setSubtitle("My Shopping Cart");
