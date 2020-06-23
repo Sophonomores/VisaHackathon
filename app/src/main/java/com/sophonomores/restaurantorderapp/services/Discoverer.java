@@ -3,12 +3,9 @@ package com.sophonomores.restaurantorderapp.services;
 import android.content.Context;
 
 import com.google.android.gms.nearby.Nearby;
-import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
 import com.google.android.gms.nearby.connection.Strategy;
-
-import androidx.annotation.NonNull;
 
 public class Discoverer {
 
