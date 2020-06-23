@@ -5,14 +5,17 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
 
 import java.util.List;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
 
     private OrderManager orderManager;
     private ShoppingCart cart;
@@ -48,7 +51,21 @@ public class CartActivity extends AppCompatActivity {
 
         List<Dish> dishesInCart = cart.getDishes();
         dishAdapter = new DishAdapter(this, dishesInCart);
+        ((DishAdapter) dishAdapter).setClickListener(this);
         dishRecyclerView.setAdapter(dishAdapter);
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Dish dishRemoved = cart.removeDishAtIndex(position);
+
+        String dishRemovedText = dishRemoved.getName() + " has been removed from your Cart.";
+        Toast.makeText(this, dishRemovedText, Toast.LENGTH_SHORT).show();
+    }
+
+    public void goToPayment(View view) {
+        Intent intent = new Intent(this, PaymentActivity.class);
+        startActivity(intent);
     }
 
 }

@@ -67,6 +67,7 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
     public void onItemClick(View view, int position) {
         Dish dish = dishes.get(position);
         orderManager.addDishToCart(dish);
+
         String addCartText = dish.getName() + " has been added to your Shopping Cart!";
         Toast.makeText(this, addCartText, Toast.LENGTH_SHORT).show();
     }

@@ -24,4 +24,12 @@ public class ShoppingCart {
     public void addDish(Dish dish) {
         dishes.add(dish);
     }
+
+    public void removeDish(Dish dish) {
+        dishes.remove(dish);
+    }
+
+    public Dish removeDishAtIndex(int index) {
+        return dishes.remove(index);
+    }
 }

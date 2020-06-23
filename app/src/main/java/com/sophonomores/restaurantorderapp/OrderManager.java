@@ -35,4 +35,7 @@ public class OrderManager {
         cart.addDish(dish);
     }
 
+    public void removeDishFromCart(Dish dish) {
+        cart.removeDish(dish);
+    }
 }
