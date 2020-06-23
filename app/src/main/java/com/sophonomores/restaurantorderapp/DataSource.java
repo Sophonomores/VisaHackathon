@@ -7,13 +7,45 @@ import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * This class supplies OrderManager with a list of restaurants discovered.
+ */
 public class DataSource {
 
-    // TODO: change these hard coded things
+    private RestaurantsChangeListener listener;
+
     public DataSource() {
     }
 
+    public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {
+        this.listener = listener;
+    }
+
+    public void notifyRestaurantsChangeListener(List<Restaurant> restaurants) {
+        listener.onRestaurantsChange(restaurants);
+    }
+
+    public void getListOfNearbyRestaurants() {
+        // TODO: to be implemented
+        // getting list of nearby restaurants is expected to be asynchronous, so
+        // once a list of restaurants is obtained,
+        // call `notifyRestaurantsChangeListener` above.
+
+        // hard coded for now
+        try {
+            TimeUnit.SECONDS.sleep(2); // simulates searching for devices
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // done with searching
+        List<Restaurant> restaurantsFound = getRestaurantData();
+        notifyRestaurantsChangeListener(restaurantsFound); // simulates callback
+    }
+
+    // TODO: change these hard coded things
     public Restaurant makeSteakHouse() {
         List<Dish> westernDishes = new ArrayList<>();
         westernDishes.add(new Dish("Sirloin", 12.50));
@@ -68,5 +100,11 @@ public class DataSource {
         orders.add(order_two);
 
         return orders;
+    }
+
+    // Classes that want to observe changes in the list of restaurants discovered
+    // should implement this interface to get notified.
+    public interface RestaurantsChangeListener {
+        void onRestaurantsChange(List<Restaurant> restaurants);
     }
 }

@@ -10,9 +10,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
-public class CustomerMainActivity extends AppCompatActivity implements RestaurantAdapter.ItemClickListener {
+import java.util.List;
+
+public class CustomerMainActivity extends AppCompatActivity
+        implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
 
     private OrderManager orderManager;
 
@@ -36,11 +40,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Restauran
 
         getSupportActionBar().setSubtitle("Eateries near me");
         prepareRestaurantRecyclerView();
-    }
 
-//    public static OrderManager getOrderManager() {
-//        return orderManager;
-//    }
+        orderManager.setRestaurantsChangeListener(this);
+        orderManager.startSearchingForRestaurants();
+    }
 
     private void prepareRestaurantRecyclerView() {
         restaurantRecyclerView = (RecyclerView) findViewById(R.id.restaurant_recycler_view);
@@ -69,5 +72,10 @@ public class CustomerMainActivity extends AppCompatActivity implements Restauran
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra(RESTAURANT_INDEX, position);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRestaurantsChange(List<Restaurant> restaurants) {
+        restaurantViewAdapter.notifyDataSetChanged();
     }
 }
