@@ -20,6 +20,7 @@
         <activity android:name=".MenuActivity" />
         <activity android:name=".CustomerMainActivity" />
         <activity android:name=".MerchantMainActivity" />
+        <activity android:name=".OrderActivity" />
     </application>
 
 </manifest>

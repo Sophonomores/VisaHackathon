@@ -25,7 +25,9 @@ public class MerchantManager {
         return restaurant;
     }
 
-    // TODO: updates the status of an order
-    public void markAsReady(Dish dish) {}
+
+    public void markAsReady(Order order) {
+        order.setReadyToServe();
+    }
 
 }
