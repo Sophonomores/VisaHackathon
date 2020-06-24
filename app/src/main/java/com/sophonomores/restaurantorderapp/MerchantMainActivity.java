@@ -1,5 +1,6 @@
 package com.sophonomores.restaurantorderapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -59,10 +60,9 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         orderRecyclerView.setAdapter(orderViewAdapter);
     }
 
-    // TODO: implement orderactivity
     public void onItemClick(View view, int position) {
-//        Intent intent = new Intent(this, OrderActivity.class);
-//        intent.putExtra(ORDER_INDEX, position);
-//        startActivity(intent);
+        Intent intent = new Intent(this, OrderActivity.class);
+        intent.putExtra(ORDER_INDEX, position);
+        startActivity(intent);
     }
 }
