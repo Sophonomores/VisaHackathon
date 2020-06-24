@@ -59,6 +59,10 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         orderRecyclerView.setAdapter(orderViewAdapter);
     }
 
+    // TODO: Change this function into a callback for each new order received
+    public void simulateVppPayment(View view) {
+    }
+
     // TODO: implement orderactivity
     public void onItemClick(View view, int position) {
 //        Intent intent = new Intent(this, OrderActivity.class);

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Restaurant Order App</string>
+    <string name="vpp_payment_simulation">Simulate VPP Payment</string>
 </resources>
