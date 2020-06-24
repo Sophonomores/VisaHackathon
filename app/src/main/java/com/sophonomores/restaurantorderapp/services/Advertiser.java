@@ -76,7 +76,7 @@ public class Advertiser {
             Request request = Parser.parseRequest(new String(payload.asBytes()));
             String response;
             try {
-                response = ApiEndpoint.getAction(request.getUri(), request.getMethod()).execute();
+                response = ApiEndpoint.getAction(request.getUri(), request.getMethod()).execute(request.getContent());
             } catch (ApiException e) {
                 response = e.getStatusCode();
             }
