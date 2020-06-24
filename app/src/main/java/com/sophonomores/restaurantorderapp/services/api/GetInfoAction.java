@@ -2,13 +2,8 @@ package com.sophonomores.restaurantorderapp.services.api;
 
 import android.util.JsonWriter;
 
-import com.sophonomores.restaurantorderapp.entities.Dish;
-import com.sophonomores.restaurantorderapp.entities.Restaurant;
-
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import androidx.annotation.Nullable;
 
