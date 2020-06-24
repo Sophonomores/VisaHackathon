@@ -56,7 +56,7 @@ public class Order {
         return totalPrice;
     }
 
-    // TODO: currently hard-coded. Need to integrate with request message. 
+    // TODO: currently hard-coded. Need to integrate with request message.
     public String getOrderTime() {
         return "12:01";
     }
