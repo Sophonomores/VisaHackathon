@@ -8,6 +8,7 @@ public class ApiEndpoint {
 
     static {
         map(ResourceURIs.MENU, ApiMethod.GET, GetMenuAction.class);
+        map(ResourceURIs.CHECKOUT, ApiMethod.POST, PostCheckoutAction.class);
     }
 
     private static void map(String uri, String method, Class<? extends Action> actionClass) {
