@@ -9,7 +9,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
+
+import java.util.List;
 
 public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
