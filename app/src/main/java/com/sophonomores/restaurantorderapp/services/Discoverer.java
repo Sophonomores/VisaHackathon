@@ -58,12 +58,16 @@ public class Discoverer {
             System.out.println(message);
             if (!devices.contains(endpointId)) {
                 devices.add(endpointId);
-                // Use this to make API calls in the app:
+                // Use these to make API calls in the app:
+
+                // GET:
                 // new Messenger(context, DEVICE_NAME).get(endpointId, ResourceURIs.MENU, System.out::println);
-                new Messenger(context, DEVICE_NAME).post(endpointId,
-                        ResourceURIs.CHECKOUT,
-                        "My order: ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-                        System.out::println);
+
+                // POST:
+                // new Messenger(context, DEVICE_NAME).post(endpointId,
+                //        ResourceURIs.CHECKOUT,
+                //        "My order: ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                //        System.out::println);
             }
         }
 
