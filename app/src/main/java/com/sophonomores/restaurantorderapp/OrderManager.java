@@ -1,5 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
+import android.content.Context;
+
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
@@ -25,9 +27,8 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
     // register observer
     private RestaurantsChangeListener listener;
 
-    private OrderManager() {
-        this.dataSource = new DataSource();
-        //this.restaurantList = dataSource.getRestaurantData();
+    private OrderManager(Context context) {
+        this.dataSource = new DataSource(context);
         this.restaurantList = new ArrayList<>();
         this.user = null;
         this.cart = new ShoppingCart();
@@ -38,15 +39,15 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
         dataSource.getListOfNearbyRestaurants();
     }
 
-    public static OrderManager init(UserProfile user) {
-        instance = new OrderManager();
+    public static OrderManager init(UserProfile user, Context context) {
+        instance = new OrderManager(context);
         instance.user = user;
         return instance;
     }
 
     public static OrderManager getInstance() {
         if (instance == null) {
-            instance = new OrderManager();
+            instance = new OrderManager(null); // null for now
         }
 
         return instance;
@@ -89,6 +90,10 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
         cart.clear();
     }
 
+    public double getCartTotalPrice() {
+        return cart.getTotalPrice();
+    }
+
     public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {
         this.listener = listener;
     }
@@ -97,12 +102,19 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
     public void onRestaurantsChange(List<Restaurant> restaurants) {
         setRestaurantList(restaurants);
         // update UI that observes this OrderManager class
-        listener.onRestaurantsChange(restaurants);
+        listener.onRestaurantsChange();
+    }
+
+    @Override
+    public void onRestaurantAdded(Restaurant restaurant) {
+        restaurantList.add(restaurant);
+        // update UI that observes this OrderManager class
+        listener.onRestaurantsChange();
     }
 
     // This interface is to register UI to observer changes in the list of restaurants in
     // OrderManager class.
     public interface RestaurantsChangeListener {
-        void onRestaurantsChange(List<Restaurant> restaurants);
+        void onRestaurantsChange();
     }
 }

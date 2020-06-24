@@ -1,52 +1,70 @@
 package com.sophonomores.restaurantorderapp;
 
+import android.content.Context;
+
+import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.services.Discoverer;
+import com.sophonomores.restaurantorderapp.services.Messenger;
+import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class supplies OrderManager with a list of restaurants discovered.
  */
 public class DataSource {
 
+    private Context context;
     private RestaurantsChangeListener listener;
 
-    public DataSource() {
+    public DataSource(Context context) {
+        this.context = context;
     }
 
     public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {
         this.listener = listener;
     }
 
-    public void notifyRestaurantsChangeListener(List<Restaurant> restaurants) {
-        listener.onRestaurantsChange(restaurants);
+    public void notifyListenerToAddRestaurant(Restaurant restaurant) {
+        //listener.onRestaurantsChange(restaurants);
+        listener.onRestaurantAdded(restaurant);
+        System.out.println("Restaurant added: " +  restaurant.getName());
     }
 
     public void getListOfNearbyRestaurants() {
-        // TODO: to be implemented
-        // getting list of nearby restaurants is expected to be asynchronous, so
-        // once a list of restaurants is obtained,
-        // call `notifyRestaurantsChangeListener` above.
 
-        // hard coded for now
-        try {
-            TimeUnit.SECONDS.sleep(2); // simulates searching for devices
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Discoverer discoverer = new Discoverer(context);
+        discoverer.startDiscovery();
+        List<String> endpointIds = discoverer.getDevices();
 
-        // done with searching
+        // hardcoded device ids
+        endpointIds = Arrays.asList("a", "b", "c");
+        System.out.println("end points found: " + endpointIds);
+        // hardcoded list of restaurants
         List<Restaurant> restaurantsFound = getRestaurantData();
-        notifyRestaurantsChangeListener(restaurantsFound); // simulates callback
+
+        for (String endpointId : endpointIds) {
+            Messenger messenger = new Messenger(context, discoverer.DEVICE_NAME);
+            // TODO: uncomment this when ready
+//            messenger.get(endpointId, ResourceURIs.MENU, (String response) -> {
+//                Gson gson = new Gson();
+//                Restaurant restaurant = gson.fromJson(response, Restaurant.class);
+//                notifyListenerToAddRestaurant(restaurant);
+//            });
+
+            // hardcoded response
+            notifyListenerToAddRestaurant(restaurantsFound.get(endpointIds.indexOf(endpointId)));
+        }
     }
 
     // TODO: change these hard coded things
-    public Restaurant makeSteakHouse() {
+    public static Restaurant makeSteakHouse() {
         List<Dish> westernDishes = new ArrayList<>();
         westernDishes.add(new Dish("Sirloin", 12.50));
         westernDishes.add(new Dish("Rib eye", 13.50));
@@ -82,7 +100,7 @@ public class DataSource {
         return restaurants;
     }
 
-    public List<Order> getConfirmedOrder () {
+    public static List<Order> getConfirmedOrder () {
 
         Restaurant steakHouse = makeSteakHouse();
         List<Dish> western_one = new ArrayList<>();
@@ -106,5 +124,6 @@ public class DataSource {
     // should implement this interface to get notified.
     public interface RestaurantsChangeListener {
         void onRestaurantsChange(List<Restaurant> restaurants);
+        void onRestaurantAdded(Restaurant restaurant);
     }
 }

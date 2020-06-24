@@ -1,7 +1,5 @@
 package com.sophonomores.restaurantorderapp.entities;
 
-import com.sophonomores.restaurantorderapp.entities.Dish;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +33,14 @@ public class ShoppingCart {
 
     public void clear() {
         dishes = new ArrayList<>();
+    }
+
+    public Double getTotalPrice() {
+        double total = 0;
+        for (Dish dish : dishes) {
+            total += dish.getPrice();
+        }
+        return total;
     }
 
     // for testing

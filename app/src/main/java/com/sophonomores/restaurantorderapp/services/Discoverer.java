@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 public class Discoverer {
 
     private final Context context;
-    private final String DEVICE_NAME = "CLIENT_APP"; // hardcoded for now
+    public final String DEVICE_NAME = "CLIENT_APP"; // hardcoded for now
     private final String SERVICE_ID = "com.sophonomores.restaurantorderapp"; // hardcoded for now
     private final EndpointDiscoveryCallback clientDiscoveryCallback = new ClientDiscoveryCallback();
 

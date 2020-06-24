@@ -13,7 +13,7 @@ public class MerchantManager {
     private Restaurant restaurant;
 
     public MerchantManager(Restaurant restaurant) {
-        this.orderList = new DataSource().getConfirmedOrder();
+        this.orderList = DataSource.getConfirmedOrder();
         this.restaurant = restaurant;
     }
 

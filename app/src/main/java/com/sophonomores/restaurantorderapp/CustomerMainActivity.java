@@ -9,10 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
-
-import java.util.List;
 
 public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
@@ -35,7 +32,7 @@ public class CustomerMainActivity extends AppCompatActivity
         if (OrderManager.isInitialised()) {
             orderManager = OrderManager.getInstance();
         } else {
-            orderManager = OrderManager.init(user);
+            orderManager = OrderManager.init(user, this);
         }
 
         getSupportActionBar().setSubtitle("Eateries near me");
@@ -75,7 +72,7 @@ public class CustomerMainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRestaurantsChange(List<Restaurant> restaurants) {
+    public void onRestaurantsChange() {
         restaurantViewAdapter.notifyDataSetChanged();
     }
 
