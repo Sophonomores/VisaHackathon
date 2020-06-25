@@ -6,28 +6,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.google.android.material.chip.Chip;
 import com.sophonomores.restaurantorderapp.entities.Dish;
+import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
 
 import java.util.List;
 
-public class DishAdapter extends RecyclerView.Adapter<DishAdapter.DishViewHolder> {
+import androidx.recyclerview.widget.RecyclerView;
+
+public class DishAdapterWithQuantity extends RecyclerView.Adapter<DishAdapterWithQuantity.DishViewHolder> {
 
     private List<Dish> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private ShoppingCart mCart;
 
     // data is passed into the constructor
-    DishAdapter(Context context, List<Dish> data) {
+    DishAdapterWithQuantity(Context context, List<Dish> data, ShoppingCart cart) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.mCart = cart;
     }
 
     // inflates the row layout from xml when needed
     @Override
     public DishViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.menu_recyclerview_row, parent, false);
+        View view = mInflater.inflate(R.layout.menu_qty_recyclerview_row, parent, false);
         return new DishViewHolder(view);
     }
 
@@ -39,6 +43,14 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.DishViewHolder
 
         String dishPrice = String.format("$%.2f", mData.get(position).getPrice());
         holder.dishPriceTextView.setText(dishPrice);
+
+        int dishQuantity = mCart.getCountForDish(mData.get(position));
+        if (dishQuantity == 0) {
+            holder.chip.setVisibility(View.INVISIBLE);
+        } else {
+            holder.chip.setVisibility(View.VISIBLE);
+            holder.chip.setText(String.valueOf(dishQuantity));
+        }
     }
 
     // total number of rows
@@ -51,11 +63,13 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.DishViewHolder
     public class DishViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView dishNameTextView;
         TextView dishPriceTextView;
+        Chip chip;
 
         DishViewHolder(View itemView) {
             super(itemView);
             dishNameTextView = itemView.findViewById(R.id.dish_name);
             dishPriceTextView = itemView.findViewById(R.id.dish_price);
+            chip = itemView.findViewById(R.id.chip);
             itemView.setOnClickListener(this);
         }
 

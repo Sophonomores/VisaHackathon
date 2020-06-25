@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp.entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ShoppingCart {
@@ -45,6 +46,10 @@ public class ShoppingCart {
 
     public int getCount() {
         return dishes.size();
+    }
+
+    public int getCountForDish(Dish dish) {
+        return Collections.frequency(dishes, dish);
     }
 
     // for testing

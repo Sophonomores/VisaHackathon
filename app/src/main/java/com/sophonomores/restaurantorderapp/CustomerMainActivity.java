@@ -19,7 +19,6 @@ public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
 
     private OrderManager orderManager;
-    private Discoverer discoverer;
 
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
@@ -65,6 +64,9 @@ public class CustomerMainActivity extends AppCompatActivity
         if (id == R.id.action_refresh) {
             orderManager.startSearchingForRestaurants();
             progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+        } else if (id == R.id.action_card) {
+            Intent intent = new Intent(this, CardActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

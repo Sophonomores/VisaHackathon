@@ -31,6 +31,8 @@
         <activity android:name=".CustomerMainActivity" />
         <activity android:name=".MerchantMainActivity" />
         <activity android:name=".OrderActivity" />
+        <activity android:name=".CardActivity" />
+        <activity android:name=".AddCardActivity" />
     </application>
 
 </manifest>

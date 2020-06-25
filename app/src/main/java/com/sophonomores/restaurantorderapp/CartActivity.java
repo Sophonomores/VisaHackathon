@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,8 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private RecyclerView.Adapter dishAdapter;
     private RecyclerView.LayoutManager dishLayoutManager;
     private TextView textView;
+    private TextView priceTextView;
+    private Button checkoutButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,10 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
 
         textView = (TextView) findViewById(R.id.textView);
         textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
+        priceTextView = (TextView) findViewById(R.id.priceTextView);
+        priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
+        checkoutButton = findViewById(R.id.button);
+        checkoutButton.setEnabled(cart.getCount() != 0);
 
         prepareDishRecyclerView();
     }
@@ -77,10 +84,12 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         Dish dishRemoved = cart.removeDishAtIndex(position);
         dishAdapter.notifyDataSetChanged();
 
-        String dishRemovedText = dishRemoved.getName() + " has been removed from your Cart.";
+        String dishRemovedText = "Removed from cart: " + dishRemoved.getName();
         Toast.makeText(this, dishRemovedText, Toast.LENGTH_SHORT).show();
 
         textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
+        priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
+        checkoutButton.setEnabled(cart.getCount() != 0);
     }
 
     public void goToPayment(View view) {

@@ -16,7 +16,8 @@ import com.sophonomores.restaurantorderapp.entities.Restaurant;
 
 import java.util.List;
 
-public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
+public class MenuActivity extends AppCompatActivity implements DishAdapterWithQuantity
+        .ItemClickListener {
 
     private OrderManager orderManager;
     private List<Dish> dishes;
@@ -70,8 +71,8 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         menuRecyclerView.setLayoutManager(menuLayoutManager);
 
         // specify an adapter
-        menuViewAdapter = new DishAdapter(this, dishes);
-        ((DishAdapter) menuViewAdapter).setClickListener(this);
+        menuViewAdapter = new DishAdapterWithQuantity(this, dishes, orderManager.getCart());
+        ((DishAdapterWithQuantity) menuViewAdapter).setClickListener(this);
         menuRecyclerView.setAdapter(menuViewAdapter);
     }
 
@@ -79,8 +80,9 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
     public void onItemClick(View view, int position) {
         Dish dish = dishes.get(position);
         orderManager.addDishToCart(dish);
+        menuViewAdapter.notifyDataSetChanged();
 
-        String addCartText = dish.getName() + " has been added to your Cart!";
+        String addCartText = "Added to cart: " + dish.getName();
         Toast.makeText(this, addCartText, Toast.LENGTH_SHORT).show();
     }
 

@@ -24,6 +24,8 @@ public class DataSource {
     private RestaurantsChangeListener listener;
     private Discoverer discoverer;
 
+    private static final boolean USE_HARDCODED_VALUES = true;
+
     public DataSource(Context context) {
         this.context = context;
     }
@@ -50,6 +52,12 @@ public class DataSource {
     }
 
     private void processEndpointIds() {
+        if (USE_HARDCODED_VALUES) {
+            Restaurant restaurant = makeSteakHouse();
+            restaurant.setEndpointId("FAKE");
+            notifyListenerToAddRestaurant(restaurant);
+            return;
+        }
         List<String> endpointIds = discoverer.getDevices();
         System.out.println("end points found: " + endpointIds);
         for (String endpointId : endpointIds) {
