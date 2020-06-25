@@ -30,7 +30,6 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
     private RecyclerView menuRecyclerView;
     private RecyclerView.Adapter menuViewAdapter;
     private RecyclerView.LayoutManager menuLayoutManager;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +42,10 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         Intent intent = getIntent();
         int restaurantIndex = intent.getIntExtra(CustomerMainActivity.RESTAURANT_INDEX, -1);
         Restaurant restaurant = orderManager.getRestaurantList().get(restaurantIndex);
-
-        dishes = new ArrayList<>();
+        dishes = restaurant.getMenu();
         getSupportActionBar().setSubtitle("Menu at " + restaurant.getName());
 
         prepareMenuRecyclerView(dishes);
-
-        getDishes(restaurant);
-        progressDialog = ProgressDialog.show(MenuActivity.this, "", "Loading...", true);
     }
 
     private void prepareMenuRecyclerView(List<Dish> dishes) {
@@ -74,17 +69,6 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         menuViewAdapter = new DishAdapter(this, dishes);
         ((DishAdapter) menuViewAdapter).setClickListener(this);
         menuRecyclerView.setAdapter(menuViewAdapter);
-    }
-
-    private void getDishes(Restaurant r) {
-        Messenger m = new Messenger(MenuActivity.this, Discoverer.DEVICE_NAME);
-        m.get(r.getEndpointId(), ResourceURIs.MENU, (String response) -> {
-            List<Dish> menu = new Gson().fromJson(response, new TypeToken<ArrayList<Dish>>(){}.getType());
-            dishes.clear();
-            dishes.addAll(menu);
-            progressDialog.dismiss();
-            menuViewAdapter.notifyDataSetChanged();
-        });
     }
 
     @Override

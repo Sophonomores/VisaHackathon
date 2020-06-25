@@ -58,15 +58,11 @@ public class DataSource {
 
     // TODO: change these hard coded things
     public static Restaurant makeSteakHouse() {
-        return new Restaurant("Steak House", "Western");
-    }
-
-    public static List<Dish> makeWesternMenu() {
         List<Dish> westernDishes = new ArrayList<>();
         westernDishes.add(new Dish("Sirloin", 12.50));
         westernDishes.add(new Dish("Rib eye", 13.50));
         westernDishes.add(new Dish("Angus Beef", 14.50));
-        return westernDishes;
+        return new Restaurant("Steak House", "Western", westernDishes);
     }
 
 //    public Restaurant makeMalaHotpot() {

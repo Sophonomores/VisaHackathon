@@ -8,7 +8,6 @@ public class ApiEndpoint {
 
     static {
         map(ResourceURIs.INFO, ApiMethod.GET, GetInfoAction.class);
-        map(ResourceURIs.MENU, ApiMethod.GET, GetMenuAction.class);
         map(ResourceURIs.CHECKOUT, ApiMethod.POST, PostCheckoutAction.class);
     }
 

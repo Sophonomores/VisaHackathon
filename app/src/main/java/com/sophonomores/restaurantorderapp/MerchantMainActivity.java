@@ -26,7 +26,7 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_merchant);
 
-        Restaurant restaurant = new Restaurant("Steak House", "western"); // hardcoded
+        Restaurant restaurant = new Restaurant("Steak House", "western", null); // hardcoded
         merchantManager = new MerchantManager(restaurant);
         getSupportActionBar().setSubtitle("Confirmed Orders");
 
