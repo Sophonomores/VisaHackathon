@@ -5,9 +5,7 @@ import android.os.Handler;
 
 import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.entities.Dish;
-import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
-import com.sophonomores.restaurantorderapp.entities.UserProfile;
 import com.sophonomores.restaurantorderapp.services.Discoverer;
 import com.sophonomores.restaurantorderapp.services.Messenger;
 import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;

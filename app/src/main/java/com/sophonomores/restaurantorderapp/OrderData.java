@@ -57,20 +57,20 @@ public class OrderData {
 //    }
 
 
-    // TODO: replace hard-coded order info
-    public static Restaurant makeSteakHouse() {
-        List<Dish> westernDishes = new ArrayList<>();
-        westernDishes.add(new Dish("Sirloin", 12.50));
-        westernDishes.add(new Dish("Rib eye", 13.50));
-        westernDishes.add(new Dish("Angus Beef", 14.50));
-
-        return new Restaurant("Steak House", "Western", westernDishes);
-    }
+//    // TODO: replace hard-coded order info
+//    public static Restaurant makeSteakHouse() {
+//        List<Dish> westernDishes = new ArrayList<>();
+//        westernDishes.add(new Dish("Sirloin", 12.50));
+//        westernDishes.add(new Dish("Rib eye", 13.50));
+//        westernDishes.add(new Dish("Angus Beef", 14.50));
+//
+//        return new Restaurant("Steak House", "Western", westernDishes);
+//    }
 
 
     public static List<Order> getConfirmedOrder () {
 
-        Restaurant steakHouse = makeSteakHouse();
+        Restaurant steakHouse =  new Restaurant("Steak House", "Western");
         List<Dish> western_one = new ArrayList<>();
         western_one.add(new Dish("Sirloin", 12.50));
         Order order_one = Order.confirmOrder(new UserProfile("Alice"), steakHouse, western_one);
