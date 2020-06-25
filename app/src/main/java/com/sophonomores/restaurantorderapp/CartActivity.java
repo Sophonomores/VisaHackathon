@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sophonomores.restaurantorderapp.entities.Dish;
@@ -23,6 +25,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private RecyclerView dishRecyclerView;
     private RecyclerView.Adapter dishAdapter;
     private RecyclerView.LayoutManager dishLayoutManager;
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +36,22 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
 
         cart = orderManager.getCart();
 
-        getSupportActionBar().setSubtitle("My Shopping Cart");
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("My Cart");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        textView = (TextView) findViewById(R.id.textView);
+        textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
 
         prepareDishRecyclerView();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void prepareDishRecyclerView() {
@@ -63,6 +79,8 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
 
         String dishRemovedText = dishRemoved.getName() + " has been removed from your Cart.";
         Toast.makeText(this, dishRemovedText, Toast.LENGTH_SHORT).show();
+
+        textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void goToPayment(View view) {

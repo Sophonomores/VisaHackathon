@@ -20,6 +20,7 @@ public class RestaurantData {
 
     private Context context;
     private RestaurantsChangeListener listener;
+    private Discoverer discoverer;
 
     public RestaurantData(Context context) {
         this.context = context;
@@ -30,41 +31,44 @@ public class RestaurantData {
     }
 
     public void notifyListenerToAddRestaurant(Restaurant restaurant) {
-        //listener.onRestaurantsChange(restaurants);
         listener.onRestaurantAdded(restaurant);
         System.out.println("Restaurant added: " +  restaurant.getName());
     }
 
     public void getListOfNearbyRestaurants() {
-        Discoverer discoverer = new Discoverer(context);
-        discoverer.startDiscovery();
-        new Handler().postDelayed(() -> {
-            List<String> endpointIds = discoverer.getDevices();
-            System.out.println("end points found: " + endpointIds);
-            for (String endpointId : endpointIds) {
-                Messenger messenger = new Messenger(context, Discoverer.DEVICE_NAME);
-                messenger.get(endpointId, ResourceURIs.INFO, (String response) -> {
-                    System.out.println("response received: " + response);
-                    Gson gson = new Gson();
-                    Restaurant restaurant = gson.fromJson(response, Restaurant.class);
-                    restaurant.setEndpointId(endpointId);
-                    notifyListenerToAddRestaurant(restaurant);
-                });
-            }
-        }, 4000);
+        if (discoverer == null) {
+            discoverer = new Discoverer(context);
+            discoverer.startDiscovery();
+            new Handler().postDelayed(() -> {
+                processEndpointIds();
+            }, 4000);
+        } else {
+            processEndpointIds();
+        }
+    }
+
+    private void processEndpointIds() {
+        List<String> endpointIds = discoverer.getDevices();
+        System.out.println("end points found: " + endpointIds);
+        for (String endpointId : endpointIds) {
+            Messenger messenger = new Messenger(context, Discoverer.DEVICE_NAME);
+            messenger.get(endpointId, ResourceURIs.INFO, (String response) -> {
+                System.out.println("response received: " + response);
+                Gson gson = new Gson();
+                Restaurant restaurant = gson.fromJson(response, Restaurant.class);
+                restaurant.setEndpointId(endpointId);
+                notifyListenerToAddRestaurant(restaurant);
+            });
+        }
     }
 
     // TODO: change these hard coded things
     public static Restaurant makeSteakHouse() {
-        return new Restaurant("Steak House", "Western");
-    }
-
-    public static List<Dish> makeWesternMenu() {
         List<Dish> westernDishes = new ArrayList<>();
         westernDishes.add(new Dish("Sirloin", 12.50));
         westernDishes.add(new Dish("Rib eye", 13.50));
-        westernDishes.add(new Dish("Angus Beef", 14.50));
-        return westernDishes;
+        westernDishes.add(new Dish("Angus beef", 14.50));
+        return new Restaurant("Steak House", "Western", westernDishes, "$$", "Casual");
     }
 
 //    public Restaurant makeMalaHotpot() {

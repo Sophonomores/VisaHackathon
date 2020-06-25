@@ -1,21 +1,25 @@
 package com.sophonomores.restaurantorderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.services.Discoverer;
 
 public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
 
     private OrderManager orderManager;
+    private Discoverer discoverer;
 
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
@@ -29,6 +33,10 @@ public class CustomerMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_customer);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setSubtitle("Eateries near me");
+
         UserProfile user = new UserProfile("username"); // hardcoded
 
         if (OrderManager.isInitialised()) {
@@ -37,23 +45,33 @@ public class CustomerMainActivity extends AppCompatActivity
             orderManager = OrderManager.init(user, this);
         }
 
-        getSupportActionBar().setSubtitle("Eateries near me");
         prepareRestaurantRecyclerView();
 
         orderManager.setRestaurantsChangeListener(this);
         orderManager.startSearchingForRestaurants();
-
         progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_customer, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_refresh) {
+            orderManager.startSearchingForRestaurants();
+            progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void prepareRestaurantRecyclerView() {
         restaurantRecyclerView = (RecyclerView) findViewById(R.id.restaurant_recycler_view);
-
-        // add divider
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(restaurantRecyclerView.getContext(),
-                                          LinearLayoutManager.VERTICAL);
-        restaurantRecyclerView.addItemDecoration(dividerItemDecoration);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView

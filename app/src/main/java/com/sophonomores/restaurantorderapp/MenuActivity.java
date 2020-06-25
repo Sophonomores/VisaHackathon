@@ -1,25 +1,19 @@
 package com.sophonomores.restaurantorderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
-import com.sophonomores.restaurantorderapp.services.Discoverer;
-import com.sophonomores.restaurantorderapp.services.Messenger;
-import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
@@ -30,27 +24,32 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
     private RecyclerView menuRecyclerView;
     private RecyclerView.Adapter menuViewAdapter;
     private RecyclerView.LayoutManager menuLayoutManager;
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        //orderManager = CustomerMainActivity.getOrderManager();
         orderManager = OrderManager.getInstance();
 
         Intent intent = getIntent();
         int restaurantIndex = intent.getIntExtra(CustomerMainActivity.RESTAURANT_INDEX, -1);
         Restaurant restaurant = orderManager.getRestaurantList().get(restaurantIndex);
+        dishes = restaurant.getMenu();
 
-        dishes = new ArrayList<>();
-        getSupportActionBar().setSubtitle("Menu at " + restaurant.getName());
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle(restaurant.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         prepareMenuRecyclerView(dishes);
+    }
 
-        getDishes(restaurant);
-        progressDialog = ProgressDialog.show(MenuActivity.this, "", "Loading...", true);
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void prepareMenuRecyclerView(List<Dish> dishes) {
@@ -76,23 +75,12 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         menuRecyclerView.setAdapter(menuViewAdapter);
     }
 
-    private void getDishes(Restaurant r) {
-        Messenger m = new Messenger(MenuActivity.this, Discoverer.DEVICE_NAME);
-        m.get(r.getEndpointId(), ResourceURIs.MENU, (String response) -> {
-            List<Dish> menu = new Gson().fromJson(response, new TypeToken<ArrayList<Dish>>(){}.getType());
-            dishes.clear();
-            dishes.addAll(menu);
-            progressDialog.dismiss();
-            menuViewAdapter.notifyDataSetChanged();
-        });
-    }
-
     @Override
     public void onItemClick(View view, int position) {
         Dish dish = dishes.get(position);
         orderManager.addDishToCart(dish);
 
-        String addCartText = dish.getName() + " has been added to your Shopping Cart!";
+        String addCartText = dish.getName() + " has been added to your Cart!";
         Toast.makeText(this, addCartText, Toast.LENGTH_SHORT).show();
     }
 

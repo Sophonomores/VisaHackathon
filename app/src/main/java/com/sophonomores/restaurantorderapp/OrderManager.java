@@ -107,7 +107,9 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
     @Override
     public void onRestaurantAdded(Restaurant restaurant) {
-        restaurantList.add(restaurant);
+        if (!restaurantList.contains(restaurant)) {
+            restaurantList.add(restaurant);
+        }
         // update UI that observes this OrderManager class
         listener.onRestaurantsChange();
     }

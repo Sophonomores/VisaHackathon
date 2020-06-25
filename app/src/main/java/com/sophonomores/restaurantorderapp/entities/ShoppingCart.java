@@ -43,6 +43,10 @@ public class ShoppingCart {
         return total;
     }
 
+    public int getCount() {
+        return dishes.size();
+    }
+
     // for testing
     public String toString() {
         StringBuilder sb = new StringBuilder();
