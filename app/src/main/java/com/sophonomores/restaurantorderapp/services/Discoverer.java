@@ -7,11 +7,8 @@ import com.google.android.gms.nearby.connection.DiscoveredEndpointInfo;
 import com.google.android.gms.nearby.connection.DiscoveryOptions;
 import com.google.android.gms.nearby.connection.EndpointDiscoveryCallback;
 import com.google.android.gms.nearby.connection.Strategy;
-import com.sophonomores.restaurantorderapp.services.api.ApiEndpoint;
-import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -19,8 +16,8 @@ import androidx.annotation.NonNull;
 public class Discoverer {
 
     private final Context context;
-    public final String DEVICE_NAME = "CLIENT_APP"; // hardcoded for now
-    private final String SERVICE_ID = "com.sophonomores.restaurantorderapp"; // hardcoded for now
+    public static final String DEVICE_NAME = "CLIENT_APP"; // hardcoded for now
+    private static final String SERVICE_ID = "com.sophonomores.restaurantorderapp"; // hardcoded for now
     private final EndpointDiscoveryCallback clientDiscoveryCallback = new ClientDiscoveryCallback();
 
     private final List<String> devices;
@@ -31,9 +28,7 @@ public class Discoverer {
     }
 
     public List<String> getDevices() {
-        List<String> result = new ArrayList<>();
-        Collections.copy(result, devices);
-        return result;
+        return devices;
     }
 
     public void startDiscovery() {
