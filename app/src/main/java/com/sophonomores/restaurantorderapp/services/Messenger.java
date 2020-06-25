@@ -42,6 +42,16 @@ public class Messenger {
                         });
     }
 
+    public void post(String endpointId, String uri, String content, Consumer<String> callback) {
+        String message = "POST:" + uri + ":" + content;
+        Nearby.getConnectionsClient(context)
+                .requestConnection(deviceName, endpointId, new ConnectionCallback(message, callback))
+                .addOnFailureListener(
+                        (Exception e) -> {
+                            throw new MessengerException("Failed to request the connection.");
+                        });
+    }
+
     private class ConnectionCallback extends ConnectionLifecycleCallback {
         private final String message;
         private final Consumer<String> callback;

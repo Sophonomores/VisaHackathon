@@ -7,7 +7,9 @@ public class ApiEndpoint {
     private static final Map<String, Map<String, Class<? extends Action>>> ACTION_MAPPINGS = new HashMap<>();
 
     static {
+        map(ResourceURIs.INFO, ApiMethod.GET, GetInfoAction.class);
         map(ResourceURIs.MENU, ApiMethod.GET, GetMenuAction.class);
+        map(ResourceURIs.CHECKOUT, ApiMethod.POST, PostCheckoutAction.class);
     }
 
     private static void map(String uri, String method, Class<? extends Action> actionClass) {

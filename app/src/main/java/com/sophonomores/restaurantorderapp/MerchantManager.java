@@ -26,6 +26,7 @@ public class MerchantManager {
     }
 
 
+
     public void markAsReady(Order order) {
         order.setReadyToServe();
     }
