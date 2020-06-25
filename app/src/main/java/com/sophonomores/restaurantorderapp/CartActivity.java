@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -46,11 +48,9 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         textView = (TextView) findViewById(R.id.textView);
-        textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
         priceTextView = (TextView) findViewById(R.id.priceTextView);
-        priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
         checkoutButton = findViewById(R.id.button);
-        checkoutButton.setEnabled(cart.getCount() != 0);
+        updateUiComponents();
 
         prepareDishRecyclerView();
     }
@@ -59,6 +59,32 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_cart, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_delete) {
+            cart.clear();
+            updateUiComponents();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateUiComponents() {
+        if (dishAdapter != null)
+            dishAdapter.notifyDataSetChanged();
+        textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
+        priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
+        checkoutButton.setEnabled(cart.getCount() != 0);
     }
 
     private void prepareDishRecyclerView() {
@@ -82,14 +108,11 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     @Override
     public void onItemClick(View view, int position) {
         Dish dishRemoved = cart.removeDishAtIndex(position);
-        dishAdapter.notifyDataSetChanged();
 
         String dishRemovedText = "Removed from cart: " + dishRemoved.getName();
         Toast.makeText(this, dishRemovedText, Toast.LENGTH_SHORT).show();
 
-        textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
-        priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
-        checkoutButton.setEnabled(cart.getCount() != 0);
+        updateUiComponents();
     }
 
     public void goToPayment(View view) {

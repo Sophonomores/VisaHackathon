@@ -33,7 +33,7 @@ public class ShoppingCart {
     }
 
     public void clear() {
-        dishes = new ArrayList<>();
+        dishes.clear();
     }
 
     public Double getTotalPrice() {
