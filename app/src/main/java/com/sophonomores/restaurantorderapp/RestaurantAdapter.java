@@ -34,8 +34,10 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(RestaurantViewHolder holder, int position) {
-        String restaurantName = mData.get(position).getName();
-        holder.myTextView.setText(restaurantName);
+        Restaurant r = mData.get(position);
+        holder.myTextView.setText(r.getName());
+        holder.categoryTextView.setText(r.getCategory());
+        holder.costTextView.setText(r.getCost() + " - " + r.getAtmosphere());
     }
 
     // total number of rows
@@ -47,10 +49,14 @@ public class RestaurantAdapter extends RecyclerView.Adapter<RestaurantAdapter.Re
     // stores and recycles views as they are scrolled off screen
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView myTextView;
+        TextView categoryTextView;
+        TextView costTextView;
 
         RestaurantViewHolder(View itemView) {
             super(itemView);
             myTextView = itemView.findViewById(R.id.restaurant_name);
+            categoryTextView = itemView.findViewById(R.id.restaurant_category);
+            costTextView = itemView.findViewById(R.id.restaurant_cost);
             itemView.setOnClickListener(this);
         }
 

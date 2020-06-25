@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,8 +27,10 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_merchant);
 
-        Restaurant restaurant = new Restaurant("Steak House", "western", null); // hardcoded
+        Restaurant restaurant = DataSource.makeSteakHouse(); // hardcoded
         merchantManager = new MerchantManager(restaurant);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         getSupportActionBar().setSubtitle("Confirmed Orders");
 
         prepareOrderRecyclerView();
