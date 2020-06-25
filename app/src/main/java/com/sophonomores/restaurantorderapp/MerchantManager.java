@@ -25,8 +25,6 @@ public class MerchantManager {
         return restaurant;
     }
 
-
-
     public void markAsReady(Order order) {
         order.setReadyToServe();
     }

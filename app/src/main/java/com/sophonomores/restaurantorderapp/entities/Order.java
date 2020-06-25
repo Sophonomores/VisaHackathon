@@ -4,7 +4,6 @@ import java.util.List;
 
 public class Order {
 
-
     public static final int CONFIRMED = 1;
     public static final int READY_TO_SERVE = 2;
     public static final int COLLECTED = 3;
@@ -48,7 +47,7 @@ public class Order {
         }
         return s.toString();
     }
-    
+
     public double getTotalPrice() {
         double totalPrice = 0;
         for (Dish dish : dishes) {

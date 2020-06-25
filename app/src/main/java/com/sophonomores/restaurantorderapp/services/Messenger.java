@@ -1,7 +1,6 @@
 package com.sophonomores.restaurantorderapp.services;
 
 import android.content.Context;
-import android.telecom.Call;
 
 import com.google.android.gms.nearby.Nearby;
 import com.google.android.gms.nearby.connection.ConnectionInfo;
@@ -11,14 +10,8 @@ import com.google.android.gms.nearby.connection.ConnectionsStatusCodes;
 import com.google.android.gms.nearby.connection.Payload;
 import com.google.android.gms.nearby.connection.PayloadCallback;
 import com.google.android.gms.nearby.connection.PayloadTransferUpdate;
-import com.google.android.gms.tasks.Task;
-import com.sophonomores.restaurantorderapp.services.api.ApiEndpoint;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import androidx.annotation.NonNull;
 

@@ -8,12 +8,11 @@ public class Restaurant {
 
     private String name;
     private String category;
-    private List<Dish> dishes;
+    private String endpointId;
 
-    public Restaurant(String name, String category, List<Dish> dishes) {
+    public Restaurant(String name, String category) {
         this.name = name;
         this.category = category;
-        this.dishes = dishes;
     }
 
     public String getName() {
@@ -24,7 +23,11 @@ public class Restaurant {
         return category;
     }
 
-    public List<Dish> getDishes() {
-        return dishes;
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
+    }
+
+    public String getEndpointId() {
+        return endpointId;
     }
 }

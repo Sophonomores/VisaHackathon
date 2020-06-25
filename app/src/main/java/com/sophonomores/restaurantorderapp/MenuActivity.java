@@ -5,14 +5,21 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
+import com.sophonomores.restaurantorderapp.services.Discoverer;
+import com.sophonomores.restaurantorderapp.services.Messenger;
+import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
@@ -23,6 +30,7 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
     private RecyclerView menuRecyclerView;
     private RecyclerView.Adapter menuViewAdapter;
     private RecyclerView.LayoutManager menuLayoutManager;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +43,14 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         Intent intent = getIntent();
         int restaurantIndex = intent.getIntExtra(CustomerMainActivity.RESTAURANT_INDEX, -1);
         Restaurant restaurant = orderManager.getRestaurantList().get(restaurantIndex);
-        dishes = restaurant.getDishes();
 
+        dishes = new ArrayList<>();
         getSupportActionBar().setSubtitle("Menu at " + restaurant.getName());
 
         prepareMenuRecyclerView(dishes);
+
+        getDishes(restaurant);
+        progressDialog = ProgressDialog.show(MenuActivity.this, "", "Loading...", true);
     }
 
     private void prepareMenuRecyclerView(List<Dish> dishes) {
@@ -63,6 +74,17 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         menuViewAdapter = new DishAdapter(this, dishes);
         ((DishAdapter) menuViewAdapter).setClickListener(this);
         menuRecyclerView.setAdapter(menuViewAdapter);
+    }
+
+    private void getDishes(Restaurant r) {
+        Messenger m = new Messenger(MenuActivity.this, Discoverer.DEVICE_NAME);
+        m.get(r.getEndpointId(), ResourceURIs.MENU, (String response) -> {
+            List<Dish> menu = new Gson().fromJson(response, new TypeToken<ArrayList<Dish>>(){}.getType());
+            dishes.clear();
+            dishes.addAll(menu);
+            progressDialog.dismiss();
+            menuViewAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override

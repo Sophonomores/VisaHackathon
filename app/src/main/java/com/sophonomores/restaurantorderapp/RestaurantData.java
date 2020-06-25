@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.entities.Dish;
@@ -12,9 +13,7 @@ import com.sophonomores.restaurantorderapp.services.Messenger;
 import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This class supplies OrderManager with a list of restaurants discovered.
@@ -39,67 +38,63 @@ public class RestaurantData {
     }
 
     public void getListOfNearbyRestaurants() {
-
         Discoverer discoverer = new Discoverer(context);
         discoverer.startDiscovery();
-        List<String> endpointIds = discoverer.getDevices();
-
-        // hardcoded device ids
-        endpointIds = Arrays.asList("a", "b", "c");
-        System.out.println("end points found: " + endpointIds);
-        // hardcoded list of restaurants
-        List<Restaurant> restaurantsFound = getRestaurantData();
-
-        for (String endpointId : endpointIds) {
-            Messenger messenger = new Messenger(context, discoverer.DEVICE_NAME);
-            // TODO: uncomment this when ready
-//            messenger.get(endpointId, ResourceURIs.MENU, (String response) -> {
-//                Gson gson = new Gson();
-//                Restaurant restaurant = gson.fromJson(response, Restaurant.class);
-//                notifyListenerToAddRestaurant(restaurant);
-//            });
-
-            // hardcoded response
-            notifyListenerToAddRestaurant(restaurantsFound.get(endpointIds.indexOf(endpointId)));
-        }
+        new Handler().postDelayed(() -> {
+            List<String> endpointIds = discoverer.getDevices();
+            System.out.println("end points found: " + endpointIds);
+            for (String endpointId : endpointIds) {
+                Messenger messenger = new Messenger(context, Discoverer.DEVICE_NAME);
+                messenger.get(endpointId, ResourceURIs.INFO, (String response) -> {
+                    System.out.println("response received: " + response);
+                    Gson gson = new Gson();
+                    Restaurant restaurant = gson.fromJson(response, Restaurant.class);
+                    restaurant.setEndpointId(endpointId);
+                    notifyListenerToAddRestaurant(restaurant);
+                });
+            }
+        }, 4000);
     }
 
     // TODO: change these hard coded things
     public static Restaurant makeSteakHouse() {
+        return new Restaurant("Steak House", "Western");
+    }
+
+    public static List<Dish> makeWesternMenu() {
         List<Dish> westernDishes = new ArrayList<>();
         westernDishes.add(new Dish("Sirloin", 12.50));
         westernDishes.add(new Dish("Rib eye", 13.50));
         westernDishes.add(new Dish("Angus Beef", 14.50));
-
-        return new Restaurant("Steak House", "Western", westernDishes);
+        return westernDishes;
     }
 
-    public Restaurant makeMalaHotpot() {
-        List<Dish> chineseDishes = new ArrayList<>();
-        chineseDishes.add(new Dish("Xiao La", 12.50));
-        chineseDishes.add(new Dish("Zhong La", 13.50));
-        chineseDishes.add(new Dish("Da La", 14.50));
-
-        return new Restaurant("Mala Hotpot", "Chinese", chineseDishes);
-    }
-
-    public Restaurant makeKimchiRamyun() {
-        List<Dish> koreanDishes = new ArrayList<>();
-        koreanDishes.add(new Dish("Chicken Ramyun", 12.50));
-        koreanDishes.add(new Dish("Sam Gye Tang", 13.50));
-        koreanDishes.add(new Dish("Bibimbap", 14.50));
-
-        return new Restaurant("Kimchi Ramyun", "Korean", koreanDishes);
-    }
-
-    public List<Restaurant> getRestaurantData() {
-        List<Restaurant> restaurants = new ArrayList<>();
-        restaurants.add(makeSteakHouse());
-        restaurants.add(makeMalaHotpot());
-        restaurants.add(makeKimchiRamyun());
-
-        return restaurants;
-    }
+//    public Restaurant makeMalaHotpot() {
+//        List<Dish> chineseDishes = new ArrayList<>();
+//        chineseDishes.add(new Dish("Xiao La", 12.50));
+//        chineseDishes.add(new Dish("Zhong La", 13.50));
+//        chineseDishes.add(new Dish("Da La", 14.50));
+//
+//        return new Restaurant("Mala Hotpot", "Chinese", chineseDishes);
+//    }
+//
+//    public Restaurant makeKimchiRamyun() {
+//        List<Dish> koreanDishes = new ArrayList<>();
+//        koreanDishes.add(new Dish("Chicken Ramyun", 12.50));
+//        koreanDishes.add(new Dish("Sam Gye Tang", 13.50));
+//        koreanDishes.add(new Dish("Bibimbap", 14.50));
+//
+//        return new Restaurant("Kimchi Ramyun", "Korean", koreanDishes);
+//    }
+//
+//    public List<Restaurant> getRestaurantData() {
+//        List<Restaurant> restaurants = new ArrayList<>();
+//        restaurants.add(makeSteakHouse());
+//        restaurants.add(makeMalaHotpot());
+//        restaurants.add(makeKimchiRamyun());
+//
+//        return restaurants;
+//    }
 
     // Classes that want to observe changes in the list of restaurants discovered
     // should implement this interface to get notified.

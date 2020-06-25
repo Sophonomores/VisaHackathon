@@ -33,11 +33,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToMerchantMainActivity(View view) {
-
         new Advertiser(MainActivity.this).startAdvertising();
         Intent intent = new Intent(this, MerchantMainActivity.class);
         startActivity(intent);
-
     }
 
 }

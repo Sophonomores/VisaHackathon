@@ -5,14 +5,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
-
-import java.util.List;
 
 public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
@@ -22,6 +20,7 @@ public class CustomerMainActivity extends AppCompatActivity
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
     private RecyclerView.LayoutManager restaurantLayoutManager;
+    private ProgressDialog progressDialog;
 
     public static final String RESTAURANT_INDEX = "RESTAURANT_INDEX";
 
@@ -43,6 +42,8 @@ public class CustomerMainActivity extends AppCompatActivity
 
         orderManager.setRestaurantsChangeListener(this);
         orderManager.startSearchingForRestaurants();
+
+        progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
     }
 
     private void prepareRestaurantRecyclerView() {
@@ -76,6 +77,7 @@ public class CustomerMainActivity extends AppCompatActivity
 
     @Override
     public void onRestaurantsChange() {
+        progressDialog.dismiss();
         restaurantViewAdapter.notifyDataSetChanged();
     }
 
