@@ -19,12 +19,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * This class supplies OrderManager with a list of restaurants discovered.
  */
-public class DataSource {
+public class RestaurantData {
 
     private Context context;
     private RestaurantsChangeListener listener;
 
-    public DataSource(Context context) {
+    public RestaurantData(Context context) {
         this.context = context;
     }
 
@@ -99,26 +99,6 @@ public class DataSource {
         restaurants.add(makeKimchiRamyun());
 
         return restaurants;
-    }
-
-    public static List<Order> getConfirmedOrder () {
-
-        Restaurant steakHouse = makeSteakHouse();
-        List<Dish> western_one = new ArrayList<>();
-        western_one.add(new Dish("Sirloin", 12.50));
-        Order order_one = Order.confirmOrder(new UserProfile("Alice"), steakHouse, western_one);
-
-        List<Dish> western_two = new ArrayList<>();
-        western_two.add(new Dish("Rib eye", 13.50));
-        western_two.add(new Dish("Angus Beef", 14.50));
-        Order order_two = Order.confirmOrder(new UserProfile("Bob"), steakHouse, western_two);
-
-
-        List<Order> orders = new ArrayList<>();
-        orders.add(order_one);
-        orders.add(order_two);
-
-        return orders;
     }
 
     // Classes that want to observe changes in the list of restaurants discovered
