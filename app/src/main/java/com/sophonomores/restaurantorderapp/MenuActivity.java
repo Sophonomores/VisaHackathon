@@ -53,6 +53,12 @@ public class MenuActivity extends AppCompatActivity implements DishAdapterWithQu
         return true;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        menuViewAdapter.notifyDataSetChanged();
+    }
+
     private void prepareMenuRecyclerView(List<Dish> dishes) {
         menuRecyclerView = (RecyclerView) findViewById(R.id.menu_recycler_view);
 
