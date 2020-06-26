@@ -59,7 +59,7 @@ public class ConfirmedOrdersActivity extends AppCompatActivity {
         orderRecyclerView.setLayoutManager(orderLayoutManager);
 
         // specify an adapter
-        orderViewAdapter = new OrderAdapter(this, orderManager.getPastOrders());
+        orderViewAdapter = new OrderAdapter(this, orderManager.getPastOrders(), true);
         orderRecyclerView.setAdapter(orderViewAdapter);
     }
 

@@ -32,6 +32,7 @@ public class MerchantMainActivity extends AppCompatActivity
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle(restaurant.getName());
         getSupportActionBar().setSubtitle("Confirmed orders");
 
         if (MerchantManager.isInitialised()) {
