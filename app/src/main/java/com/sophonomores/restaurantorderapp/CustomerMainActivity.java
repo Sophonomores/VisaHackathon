@@ -8,12 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
-import com.sophonomores.restaurantorderapp.services.Discoverer;
 
 public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
@@ -24,6 +24,7 @@ public class CustomerMainActivity extends AppCompatActivity
     private RecyclerView.Adapter restaurantViewAdapter;
     private RecyclerView.LayoutManager restaurantLayoutManager;
     private ProgressDialog progressDialog;
+    private boolean isLoading = false;
 
     public static final String RESTAURANT_INDEX = "RESTAURANT_INDEX";
 
@@ -47,8 +48,9 @@ public class CustomerMainActivity extends AppCompatActivity
         prepareRestaurantRecyclerView();
 
         orderManager.setRestaurantsChangeListener(this);
+        isLoading = true;
         orderManager.startSearchingForRestaurants();
-        progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+        showProgressDialog();
     }
 
     @Override
@@ -62,8 +64,9 @@ public class CustomerMainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
+            isLoading = true;
             orderManager.startSearchingForRestaurants();
-            progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+            showProgressDialog();
         } else if (id == R.id.action_card) {
             Intent intent = new Intent(this, CardActivity.class);
             startActivity(intent);
@@ -89,6 +92,15 @@ public class CustomerMainActivity extends AppCompatActivity
         restaurantRecyclerView.setAdapter(restaurantViewAdapter);
     }
 
+    private void showProgressDialog() {
+        progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+        new Handler().postDelayed(() -> {
+            if (!isLoading) {
+                progressDialog.dismiss();
+            }
+        }, 1000);
+    }
+
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra(RESTAURANT_INDEX, position);
@@ -97,7 +109,9 @@ public class CustomerMainActivity extends AppCompatActivity
 
     @Override
     public void onRestaurantsChange() {
-        progressDialog.dismiss();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        isLoading = false;
         restaurantViewAdapter.notifyDataSetChanged();
     }
 

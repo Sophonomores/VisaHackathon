@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".OrderActivity">
 
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/toolbar" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/order_detail_recycler_view"
         android:scrollbars="vertical"

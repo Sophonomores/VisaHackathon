@@ -31,7 +31,7 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         merchantManager = new MerchantManager(restaurant);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setSubtitle("Confirmed Orders");
+        getSupportActionBar().setSubtitle("Confirmed orders");
 
         prepareOrderRecyclerView();
     }

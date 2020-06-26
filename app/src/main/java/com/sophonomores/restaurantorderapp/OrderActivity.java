@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,9 +31,19 @@ public class OrderActivity extends AppCompatActivity {
         int orderIndex = intent.getIntExtra(MerchantMainActivity.ORDER_INDEX, -1);
         order = merchantManager.getOrderList().get(orderIndex);
 
-        getSupportActionBar().setSubtitle("Order from " + order.getCustomerName());
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle("Order from " + order.getCustomerName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         prepareOrderDetailRecyclerView(order);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void prepareOrderDetailRecyclerView(Order order) {
