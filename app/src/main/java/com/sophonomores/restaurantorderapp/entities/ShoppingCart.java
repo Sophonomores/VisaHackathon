@@ -19,8 +19,6 @@ public class ShoppingCart {
     }
 
     public List<Dish> getDishes() {
-        List<Dish> dishes = new ArrayList<>();
-        dishes.addAll(this.dishes);
         return dishes;
     }
 

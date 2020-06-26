@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp.entities;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +26,9 @@ public class Order {
     }
 
     public static Order confirmOrder (UserProfile customer, Restaurant restaurant, List<Dish> dishes) {
-        Order order = new Order(customer, restaurant, dishes);
+        List<Dish> newDishes = new ArrayList<>();
+        newDishes.addAll(dishes);
+        Order order = new Order(customer, restaurant, newDishes);
         order.setOrderTime(new SimpleDateFormat("HH:mm").format(new Date()));
         return order;
     }
