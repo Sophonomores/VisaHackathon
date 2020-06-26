@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -130,6 +131,12 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         Restaurant currentRestaurant = orderManager.getCurrentRestaurant();
         Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes());
         progressDialog = ProgressDialog.show(CartActivity.this, "", "Processing...", true);
+        if (RestaurantData.USE_HARDCODED_VALUES) {
+            new Handler().postDelayed(() -> {
+                handleCheckoutSuccess(myOrder);
+            }, 1000);
+            return;
+        }
         new Messenger(CartActivity.this, Discoverer.DEVICE_NAME)
                 .post(currentRestaurant.getEndpointId(),
                         ResourceURIs.CHECKOUT,
@@ -156,7 +163,8 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                     startActivity(intent);
                 });
         AlertDialog dialog = builder.create();
-        progressDialog.dismiss();
+        if (progressDialog != null)
+            progressDialog.dismiss();
         dialog.show();
     }
 }

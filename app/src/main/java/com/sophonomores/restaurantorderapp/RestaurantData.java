@@ -22,7 +22,7 @@ public class RestaurantData {
     private RestaurantsChangeListener listener;
     private Discoverer discoverer;
 
-    private static final boolean USE_HARDCODED_VALUES = false;
+    public static final boolean USE_HARDCODED_VALUES = true;
 
     public RestaurantData(Context context) {
         this.context = context;
