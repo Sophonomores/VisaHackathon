@@ -14,7 +14,7 @@ import java.util.List;
  * This class handles the main business logic of the customer app.
  * View (various Activity classes) should access the app through this class.
  */
-public class OrderManager implements DataSource.RestaurantsChangeListener {
+public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
     // enforce Singleton pattern
     private static OrderManager instance;
@@ -23,21 +23,21 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
     private Restaurant currentRestaurant;
     private UserProfile user;
     private ShoppingCart cart;
-    private DataSource dataSource;
+    private RestaurantData restaurantData;
 
     // register observer
     private RestaurantsChangeListener listener;
 
     private OrderManager(Context context) {
-        this.dataSource = new DataSource(context);
+        this.restaurantData = new RestaurantData(context);
         this.restaurantList = new ArrayList<>();
         this.user = null;
         this.cart = new ShoppingCart();
     }
 
     public void startSearchingForRestaurants() {
-        dataSource.setRestaurantsChangeListener(this);
-        dataSource.getListOfNearbyRestaurants();
+        restaurantData.setRestaurantsChangeListener(this);
+        restaurantData.getListOfNearbyRestaurants();
     }
 
     public static OrderManager init(UserProfile user, Context context) {

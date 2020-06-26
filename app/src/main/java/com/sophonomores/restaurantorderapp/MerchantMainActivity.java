@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 
-public class MerchantMainActivity extends AppCompatActivity implements OrderAdapter.ItemClickListener {
+public class MerchantMainActivity extends AppCompatActivity
+        implements OrderAdapter.ItemClickListener, MerchantManager.OrderListener {
 
     private static MerchantManager merchantManager;
 
@@ -27,13 +28,23 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_merchant);
 
-        Restaurant restaurant = DataSource.makeSteakHouse(); // hardcoded
-        merchantManager = new MerchantManager(restaurant);
+        Restaurant restaurant = RestaurantData.makeSteakHouse(); // hardcoded
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setSubtitle("Confirmed orders");
 
+        if (MerchantManager.isInitialised()) {
+            merchantManager = MerchantManager.getInstance();
+        } else {
+            merchantManager = MerchantManager.init(restaurant, this);
+        }
+
         prepareOrderRecyclerView();
+
+        merchantManager.setOrderListener(this);
+        merchantManager.startReceivingOrders();
+
     }
 
     public static MerchantManager getMerchantManager() {
@@ -68,4 +79,10 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         intent.putExtra(ORDER_INDEX, position);
         startActivity(intent);
     }
+
+    @Override
+    public void onOrderDataChange() {
+        orderViewAdapter.notifyDataSetChanged();
+    }
+
 }

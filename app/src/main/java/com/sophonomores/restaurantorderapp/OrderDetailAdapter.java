@@ -40,7 +40,7 @@ public class OrderDetailAdapter extends  RecyclerView.Adapter<OrderDetailAdapter
         String dishList = mData.getDishesString();
         holder.dishListTextView.setText(dishList);
 
-        String totalPrice = "$"+ mData.getTotalPrice();
+        String totalPrice = String.format("Total: $%.2f", mData.getTotalPrice());
         holder.totalPriceTextView.setText(totalPrice);
     }
 
