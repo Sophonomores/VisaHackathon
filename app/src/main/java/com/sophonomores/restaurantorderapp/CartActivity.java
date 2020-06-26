@@ -1,11 +1,13 @@
 package com.sophonomores.restaurantorderapp;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -20,10 +22,10 @@ import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
-import com.sophonomores.restaurantorderapp.entities.UserProfile;
 import com.sophonomores.restaurantorderapp.services.Discoverer;
 import com.sophonomores.restaurantorderapp.services.Messenger;
 import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
+import com.sophonomores.restaurantorderapp.services.api.StatusCode;
 
 import java.util.List;
 
@@ -38,6 +40,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private TextView textView;
     private TextView priceTextView;
     private Button checkoutButton;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,13 +129,33 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         // There is a bug with order manager: the cart should only allow orders from one restaurant.
         Restaurant currentRestaurant = orderManager.getCurrentRestaurant();
         Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes());
+        progressDialog = ProgressDialog.show(CartActivity.this, "", "Processing...", true);
         new Messenger(CartActivity.this, Discoverer.DEVICE_NAME)
                 .post(currentRestaurant.getEndpointId(),
                         ResourceURIs.CHECKOUT,
                         new Gson().toJson(myOrder),
-                        System.out::println);
+                        (String response) -> {
+                            if(response.equals(StatusCode.OK)) {
+                                handleCheckoutSuccess();
+                            }
+                        });
 //        Intent intent = new Intent(this, PaymentActivity.class);
 //        startActivity(intent);
     }
 
+    private void handleCheckoutSuccess() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        builder.setMessage("Your order has been placed!\nWe will notify you shortly when your food is ready.")
+                .setTitle("Order Placed")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    Intent intent = new Intent(CartActivity.this, CustomerMainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    orderManager.clearShoppingCart();
+                    startActivity(intent);
+                });
+        AlertDialog dialog = builder.create();
+        progressDialog.dismiss();
+        dialog.show();
+    }
 }
