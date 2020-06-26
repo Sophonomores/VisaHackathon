@@ -8,6 +8,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 
 public class MerchantMainActivity extends AppCompatActivity implements OrderAdapter.ItemClickListener {
@@ -61,6 +67,24 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
 
     // TODO: Change this function into a callback for each new order received
     public void simulateVppPayment(View view) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.google.com";
+
+        StringRequest req = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                System.out.println("We got a response");
+                System.out.println(response.substring(0, 500));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("That didn't work!!!");
+            }
+        });
+
+        queue.add(req);
     }
 
     // TODO: implement orderactivity
