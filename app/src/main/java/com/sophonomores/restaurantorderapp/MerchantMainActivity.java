@@ -12,9 +12,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
+
+import org.json.JSONObject;
 
 public class MerchantMainActivity extends AppCompatActivity implements OrderAdapter.ItemClickListener {
 
@@ -66,21 +68,24 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
     }
 
     // TODO: Change this function into a callback for each new order received
+    // TODO: Set request queue as a singleton,
+    //  because its lifetime is the same with applicateino ifetime
     public void simulateVppPayment(View view) {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.google.com";
+        RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+        String url = "https://postman-echo.com/get?foo1=bar1&foo2=bar2";
 
-        StringRequest req = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
+            public void onResponse(JSONObject response) {
                 System.out.println("We got a response");
-                System.out.println(response.substring(0, 500));
+                System.out.println(response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 System.out.println("That didn't work!!!");
+                System.out.println(error.getCause());
             }
         });
 
