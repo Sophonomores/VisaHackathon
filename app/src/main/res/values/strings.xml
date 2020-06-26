@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Restaurant Order App</string>
+    <string name="cancel">Cancel</string>
+    <string name="new_fingerprint_enrolled_description">
+        A new fingerprint was added to this device, so your password is required.
+    </string>
+    <string name="ok">OK</string>
+    <string name="password">Password</string>
+    <string name="password_description">Enter your store password to continue</string>
+    <string name="prompt_info_title">My App\'s Authentication</string>
+    <string name="prompt_info_subtitle">Please login to get access</string>
+    <string name="prompt_info_description">My App is using Android biometric authentication</string>
+    <string name="prompt_info_use_app_password">Use app password</string>
+    <string name="setup_lock_screen">
+        Secure lock screen hasn\'t set been up.\n
+        Go to \'Settings -> Security -> Fingerprint\' to set up a fingerprint or face
+    </string>
+    <string name="sign_in">Sign in</string>
+    <string name="use_fingerprint_in_future">Use biometrics in the future</string>
+    <string name="use_fingerprint_to_authenticate_key">use_fingerprint_to_authenticate_key</string>
 </resources>

@@ -11,7 +11,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:id="@+id/confirmation_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Body2"
+        android:textColor="?android:attr/colorAccent"
+        android:text="Payment successful"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <Button
+        android:id="@+id/pay_buttom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Pay Now"
