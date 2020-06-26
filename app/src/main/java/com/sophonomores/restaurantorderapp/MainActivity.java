@@ -23,8 +23,7 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_COARSE_LOCATION,
 
                 // Only for merchant, could be moved to merchant main
-                Manifest.permission.INTERNET,
-                Manifest.permission.ACCESS_NETWORK_STATE
+                Manifest.permission.INTERNET
         }, 1);
     }
 
