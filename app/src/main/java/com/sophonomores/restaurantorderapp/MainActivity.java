@@ -1,11 +1,11 @@
 package com.sophonomores.restaurantorderapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +20,11 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_WIFI_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE,
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+
+                // Only for merchant, could be moved to merchant main
+                Manifest.permission.INTERNET,
+                Manifest.permission.ACCESS_NETWORK_STATE
         }, 1);
     }
 
