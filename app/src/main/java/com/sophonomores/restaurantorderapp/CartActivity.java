@@ -15,8 +15,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.entities.Dish;
+import com.sophonomores.restaurantorderapp.entities.Order;
+import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
+import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.services.Discoverer;
+import com.sophonomores.restaurantorderapp.services.Messenger;
+import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
 import java.util.List;
 
@@ -116,8 +123,17 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     }
 
     public void goToPayment(View view) {
-        Intent intent = new Intent(this, PaymentActivity.class);
-        startActivity(intent);
+        // There is a bug with order manager: the cart should only allow orders from one restaurant.
+        // This is a hack to get the current restaurant.
+        Restaurant currentRestaurant = orderManager.getRestaurantList().get(0);
+        Order myOrder = Order.confirmOrder(new UserProfile("John Doe"), currentRestaurant, cart.getDishes());
+        new Messenger(CartActivity.this, Discoverer.DEVICE_NAME)
+                .post(currentRestaurant.getEndpointId(),
+                        ResourceURIs.CHECKOUT,
+                        new Gson().toJson(myOrder),
+                        System.out::println);
+//        Intent intent = new Intent(this, PaymentActivity.class);
+//        startActivity(intent);
     }
 
 }
