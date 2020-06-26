@@ -20,6 +20,7 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
     private static OrderManager instance;
 
     private List<Restaurant> restaurantList;
+    private Restaurant currentRestaurant;
     private UserProfile user;
     private ShoppingCart cart;
     private DataSource dataSource;
@@ -92,6 +93,14 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
 
     public double getCartTotalPrice() {
         return cart.getTotalPrice();
+    }
+
+    public Restaurant getCurrentRestaurant() {
+        return currentRestaurant;
+    }
+
+    public void setCurrentRestaurant(Restaurant r) {
+        currentRestaurant = r;
     }
 
     public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {

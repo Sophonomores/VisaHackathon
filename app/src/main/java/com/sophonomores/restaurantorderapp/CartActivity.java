@@ -124,9 +124,8 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
 
     public void goToPayment(View view) {
         // There is a bug with order manager: the cart should only allow orders from one restaurant.
-        // This is a hack to get the current restaurant.
-        Restaurant currentRestaurant = orderManager.getRestaurantList().get(0);
-        Order myOrder = Order.confirmOrder(new UserProfile("John Doe"), currentRestaurant, cart.getDishes());
+        Restaurant currentRestaurant = orderManager.getCurrentRestaurant();
+        Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes());
         new Messenger(CartActivity.this, Discoverer.DEVICE_NAME)
                 .post(currentRestaurant.getEndpointId(),
                         ResourceURIs.CHECKOUT,

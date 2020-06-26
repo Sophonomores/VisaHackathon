@@ -37,7 +37,7 @@ public class CustomerMainActivity extends AppCompatActivity
         setSupportActionBar(myToolbar);
         getSupportActionBar().setSubtitle("Eateries near me");
 
-        UserProfile user = new UserProfile("username"); // hardcoded
+        UserProfile user = new UserProfile("John Doe"); // hardcoded
 
         if (OrderManager.isInitialised()) {
             orderManager = OrderManager.getInstance();
@@ -69,6 +69,9 @@ public class CustomerMainActivity extends AppCompatActivity
             showProgressDialog();
         } else if (id == R.id.action_card) {
             Intent intent = new Intent(this, CardActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_profile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         }
 

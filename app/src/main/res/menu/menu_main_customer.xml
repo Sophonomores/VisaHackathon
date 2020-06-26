@@ -2,7 +2,11 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:title="My orders"
+        android:id="@+id/action_profile"
+        android:title="Edit profile"
+        app:showAsAction="collapseActionView" />
+    <item
+        android:title="View past orders"
         app:showAsAction="collapseActionView" />
     <item
         android:id="@+id/action_refresh"
@@ -11,6 +15,6 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_card"
-        android:title="My cards"
+        android:title="Manage cards"
         app:showAsAction="collapseActionView" />
 </menu>

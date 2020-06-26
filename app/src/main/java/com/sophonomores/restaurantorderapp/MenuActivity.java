@@ -36,6 +36,7 @@ public class MenuActivity extends AppCompatActivity implements DishAdapterWithQu
         Intent intent = getIntent();
         int restaurantIndex = intent.getIntExtra(CustomerMainActivity.RESTAURANT_INDEX, -1);
         Restaurant restaurant = orderManager.getRestaurantList().get(restaurantIndex);
+        orderManager.setCurrentRestaurant(restaurant);
         dishes = restaurant.getMenu();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
