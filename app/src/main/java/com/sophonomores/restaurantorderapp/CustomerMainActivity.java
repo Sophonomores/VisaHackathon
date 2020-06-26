@@ -73,6 +73,9 @@ public class CustomerMainActivity extends AppCompatActivity
         } else if (id == R.id.action_profile) {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
+        } else if (id == R.id.action_past_order) {
+            Intent intent = new Intent(this, ConfirmedOrdersActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

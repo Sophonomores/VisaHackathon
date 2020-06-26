@@ -1,5 +1,7 @@
 package com.sophonomores.restaurantorderapp.entities;
 
+import com.sophonomores.restaurantorderapp.DishAdapter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,8 @@ public class ShoppingCart {
     }
 
     public List<Dish> getDishes() {
+        List<Dish> dishes = new ArrayList<>();
+        dishes.addAll(this.dishes);
         return dishes;
     }
 

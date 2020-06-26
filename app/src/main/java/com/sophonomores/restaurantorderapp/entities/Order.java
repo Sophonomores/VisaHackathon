@@ -1,5 +1,7 @@
 package com.sophonomores.restaurantorderapp.entities;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class Order {
@@ -8,10 +10,10 @@ public class Order {
     public static final int READY_TO_SERVE = 2;
     public static final int COLLECTED = 3;
 
-
     private UserProfile customer;
     private Restaurant restaurant;
     private List<Dish> dishes;
+    private String time;
     private int status;
     // TODO: time of order
 
@@ -23,7 +25,9 @@ public class Order {
     }
 
     public static Order confirmOrder (UserProfile customer, Restaurant restaurant, List<Dish> dishes) {
-        return new Order(customer, restaurant, dishes);
+        Order order = new Order(customer, restaurant, dishes);
+        order.setOrderTime(new SimpleDateFormat("HH:mm").format(new Date()));
+        return order;
     }
 
     public String getCustomerName() {
@@ -56,9 +60,12 @@ public class Order {
         return totalPrice;
     }
 
-    // TODO: currently hard-coded. Need to integrate with request message.
+    public void setOrderTime(String time) {
+        this.time = time;
+    }
+
     public String getOrderTime() {
-        return "12:01";
+        return this.time;
     }
 
     public void setReadyToServe() {

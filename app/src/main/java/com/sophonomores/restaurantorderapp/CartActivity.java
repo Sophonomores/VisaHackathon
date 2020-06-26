@@ -136,14 +136,14 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                         new Gson().toJson(myOrder),
                         (String response) -> {
                             if(response.equals(StatusCode.OK)) {
-                                handleCheckoutSuccess();
+                                handleCheckoutSuccess(myOrder);
                             }
                         });
 //        Intent intent = new Intent(this, PaymentActivity.class);
 //        startActivity(intent);
     }
 
-    private void handleCheckoutSuccess() {
+    private void handleCheckoutSuccess(Order myOrder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your order has been placed!\nWe will notify you shortly when your food is ready.")
                 .setTitle("Order Placed")
@@ -151,6 +151,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(CartActivity.this, CustomerMainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    orderManager.addPastOrder(myOrder);
                     orderManager.clearShoppingCart();
                     startActivity(intent);
                 });

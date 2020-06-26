@@ -39,6 +39,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
         String dishList = mData.get(position).getDishesString();
         holder.dishListTextView.setText(dishList);
+
+        String time = mData.get(position).getOrderTime();
+        holder.timeTextView.setText(time);
     }
 
     // total number of rows
@@ -51,11 +54,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView customerTextView;
         TextView dishListTextView;
+        TextView timeTextView;
 
         OrderViewHolder(View itemView) {
             super(itemView);
             customerTextView = itemView.findViewById(R.id.user_name);
             dishListTextView = itemView.findViewById(R.id.dish_list);
+            timeTextView = itemView.findViewById(R.id.timeTextView);
             itemView.setOnClickListener(this);
         }
 

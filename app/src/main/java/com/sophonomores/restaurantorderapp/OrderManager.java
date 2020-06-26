@@ -3,6 +3,7 @@ package com.sophonomores.restaurantorderapp;
 import android.content.Context;
 
 import com.sophonomores.restaurantorderapp.entities.Dish;
+import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
@@ -24,6 +25,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
     private UserProfile user;
     private ShoppingCart cart;
     private RestaurantData restaurantData;
+    private List<Order> pastOrders;
 
     // register observer
     private RestaurantsChangeListener listener;
@@ -33,6 +35,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
         this.restaurantList = new ArrayList<>();
         this.user = null;
         this.cart = new ShoppingCart();
+        this.pastOrders = new ArrayList<>();
     }
 
     public void startSearchingForRestaurants() {
@@ -101,6 +104,14 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
     public void setCurrentRestaurant(Restaurant r) {
         currentRestaurant = r;
+    }
+
+    public List<Order> getPastOrders() {
+        return this.pastOrders;
+    }
+
+    public void addPastOrder(Order o) {
+        this.pastOrders.add(o);
     }
 
     public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {
