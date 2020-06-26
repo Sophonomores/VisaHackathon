@@ -20,15 +20,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/confirmation_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Body2"
+        android:textColor="?android:attr/colorAccent"
+        android:text="Payment successful"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <Button
-        android:id="@+id/button"
+        android:id="@+id/check_out_button"
         style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="6dp"
         android:layout_marginStart="6dp"
-        android:onClick="goToPayment"
         android:text="Checkout"
         android:textSize="17sp"
         app:icon="@drawable/ic_baseline_payment_24"
@@ -68,7 +80,7 @@
         android:layout_marginStart="20dp"
         android:text="Total"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/check_out_button"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
