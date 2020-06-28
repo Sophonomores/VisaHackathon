@@ -17,12 +17,27 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWEDecrypter;
+import com.nimbusds.jose.JWEHeader;
+import com.nimbusds.jose.JWEObject;
+import com.nimbusds.jose.Payload;
+import com.nimbusds.jose.crypto.RSADecrypter;
+import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.util.IOUtils;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -88,12 +103,133 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
     // TODO: Set request queue as a singleton,
     //  because its lifetime is the same with applicateino ifetime
     public void simulateVppPayment(View view) {
-        String url = "https://sandbox.api.visa.com/vdp/helloworld";
+        String url = "https://sandbox.api.visa.com/acs/v1/payments/authorizations";
         HurlStack hurlStack = new HurlStack(null, generateSSLSocketFactory());
         RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), hurlStack);
 
-        JsonObjectRequest req = new VppRequest(Request.Method.GET, url, null);
+        JSONObject payload = null;
+        try {
+            payload = new JSONObject(getEncryptedPayload());
+        } catch (Exception ex) {
+            System.out.println("An error occur while converting string to JSON Object");
+            ex.printStackTrace();
+        }
+
+        JsonObjectRequest req = new VppRequest(Request.Method.POST, url, payload, (Response.Listener<JSONObject>) response -> {
+            System.out.println("Response received!!!");
+            System.out.println(response.toString());
+            System.out.println(decryptResponse(response));
+        });
+
         queue.add(req);
+    }
+
+    private static final String dummyPayload = " {" +
+            "  \"acctInfo\": {" +
+            "    \"primryAcctNum\": {" +
+            "      \"pan\": \"4111111111111111\"," +
+            "      \"panExpDt\": \"2019-12\"" +
+            "    }" +
+            "  }," +
+            "  \"cardAcceptr\": {" +
+            "    \"clientId\": \"0123456789012345678901234567893\"" +
+            "  }," +
+            "  \"freeFormDescrptnData\": \"Freeformdata\"," +
+            "  \"msgIdentfctn\": {" +
+            "    \"correlatnId\": \"14bc567d90f23e56a8f045\"," +
+            "    \"origId\": \"123451234567890\"" +
+            "  }," +
+            "  \"msgTransprtData\": \"TransportData\"," +
+            "  \"transctn\": {" +
+            "    \"eComData\": {" +
+            "      \"digitalGoods\": \"true\"," +
+            "      \"eciCd\": \"5\"," +
+            "      \"xid\": \"EEC4567F90123A5678B0123EA67890D2345678FF\"" +
+            "    }," +
+            "    \"localDtTm\": \"2020-06-25T16:44:04\"," +
+            "    \"partialAuthInd\": \"true\"," +
+            "    \"posData\": {" +
+            "      \"envrnmnt\": \"eCom\"," +
+            "      \"panEntryMode\": \"OnFile\"," +
+            "      \"panSrce\": \"VCIND\"" +
+            "    }," +
+            "    \"tranAmt\": {" +
+            "      \"amt\": \"51.29\"," +
+            "      \"numCurrCd\": \"840\"" +
+            "    }," +
+            "    \"tranDesc\": \"Transactiondescription\"" +
+            "  }," +
+            "  \"verfctnData\": {" +
+            "    \"billngAddr\": {" +
+            "      \"addrLn\": \"PO Box 12345\"," +
+            "      \"postlCd\": \"12345\"" +
+            "    }" +
+            "  }," +
+            "  \"riskAssessmntData\": {" +
+            "    \"lowVlExmptn\": \"true\"," +
+            "    \"traExmptn\": \"true\"," +
+            "    \"trustdMerchntExmptn\": \"true\"," +
+            "    \"scpExmptn\": \"true\"," +
+            "    \"delgtdAthntctn\": \"true\"" +
+            "  }" +
+            "}";
+
+    private String getEncryptedPayload() {
+        // Define the JWE spec (RSA_OAEP_256 + AES_128_GCM)
+        JWEHeader.Builder headerBuilder = new JWEHeader.Builder(
+                JWEAlgorithm.RSA_OAEP_256,
+                EncryptionMethod.A128GCM);
+
+        // KeyId was taken from VDP board
+        headerBuilder.keyID("8a4f15b3-0545-400b-a2f0-6a52c5c88df4");
+
+        // Add token issued at timestamp (iat)
+        headerBuilder.customParam("iat", System.currentTimeMillis());
+
+        JWEObject jweObject = new JWEObject(headerBuilder.build(), new Payload(dummyPayload));
+        String encryptedPayload = "";
+
+        try {
+            String pemEncodedPublicKey = IOUtils.readInputStreamToString(
+                    getResources().openRawResource(R.raw.server_cert_for_mle),
+                    Charset.forName("UTF-8"));
+
+            CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+            Certificate cf = certFactory.generateCertificate(
+                    new ByteArrayInputStream(pemEncodedPublicKey.getBytes()));
+
+            jweObject.encrypt(new RSAEncrypter((RSAPublicKey) cf.getPublicKey()));
+            encryptedPayload = "{\"encData\":\"" + jweObject.serialize() + "\"}";
+        } catch(Exception ex ) {
+            System.out.println("There is an error while we are encrypting payload!!!");
+            ex.printStackTrace();
+        }
+
+        return encryptedPayload;
+    }
+
+    private String decryptResponse(JSONObject response) {
+        String decryptedData = "";
+
+        try {
+            JWEObject encryptedData = JWEObject.parse(response.getString("encData"));
+            String pemEncodedPrivateKey = IOUtils.readInputStreamToString(
+                    getResources().openRawResource(R.raw.client_private_key_cert_for_mle),
+                    Charset.forName("UTF-8"));
+
+            JWK jwk = JWK.parseFromPEMEncodedObjects(pemEncodedPrivateKey);
+
+            JWEDecrypter decrypter = new RSADecrypter(jwk.toRSAKey());
+            encryptedData.decrypt(decrypter);
+
+            decryptedData = encryptedData.getPayload().toString();
+            System.out.println("Here is the real payload: " + decryptedData);
+        } catch(Exception ex) {
+            System.out.println("There is an issue while decrypting response");
+            ex.printStackTrace();
+        }
+
+        return decryptedData;
     }
 
     private static final String P12PASSWORD = "GO_BLE_GO";
@@ -149,13 +285,11 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
 class VppRequest extends JsonObjectRequest {
     private static final String BASIC_AUTH_USERNAME = "Z3TILZ6P9UBKKX51X4GA21c4mjn0tkbcVT5330DsB5Ut8BOXA";
     private static final String BASIC_AUTH_PASSWORD = "J0e4fv8xYKu82Q33Tc7jJUe7wZ86B0Cr";
+    private static final String MLE_KEY_ID = "8a4f15b3-0545-400b-a2f0-6a52c5c88df4";
 
-    public VppRequest(int method, String url, @Nullable JSONObject jsonRequest) {
-        super(method, url, jsonRequest, (Response.Listener<JSONObject>) response -> {
-            System.out.println("Response received!!!");
-            System.out.println(response.toString());
-        }, error -> {
-            System.out.println("Receive an error code!!");
+    public VppRequest(int method, String url, @Nullable JSONObject jsonRequest, Response.Listener<JSONObject> listener) {
+        super(method, url, jsonRequest, listener, error -> {
+            System.out.println("Receive an error code!!!");
             System.out.println(error.getCause());
         });
     }
@@ -166,7 +300,11 @@ class VppRequest extends JsonObjectRequest {
         String encodedCredential = Base64.encodeToString(credential.getBytes(), Base64.NO_WRAP);
 
         Map<String, String> currentHeader = new HashMap<>(super.getHeaders());
+        // Add basic authentication to the header
         currentHeader.put("Authorization", "Basic " + encodedCredential);
+
+        // Add Key Id header for MLE
+        currentHeader.put("keyId", MLE_KEY_ID);
         return currentHeader;
     }
 }
