@@ -246,6 +246,7 @@ class VppRequest extends JsonObjectRequest {
     private static final String MLE_KEY_ID = "8a4f15b3-0545-400b-a2f0-6a52c5c88df4";
 
     public VppRequest(int method, String url, @Nullable JSONObject jsonRequest, Response.Listener<JSONObject> listener) {
+        // Adds a default error handler
         super(method, url, jsonRequest, listener, error -> {
             System.out.println("Receive an error code!!!");
             System.out.println(error.getCause());
