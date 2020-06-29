@@ -17,4 +17,13 @@ public class Dish {
     public double getPrice() {
         return price;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Dish)) {
+            return false;
+        }
+        Dish d = (Dish) o;
+        return d.getName().equals(name);
+    }
 }

@@ -1,6 +1,9 @@
 package com.sophonomores.restaurantorderapp;
 
+import android.content.Context;
+
 import com.sophonomores.restaurantorderapp.entities.Dish;
+import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
@@ -12,41 +15,43 @@ import java.util.List;
  * This class handles the main business logic of the customer app.
  * View (various Activity classes) should access the app through this class.
  */
-public class OrderManager implements DataSource.RestaurantsChangeListener {
+public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
     // enforce Singleton pattern
     private static OrderManager instance;
 
     private List<Restaurant> restaurantList;
+    private Restaurant currentRestaurant;
     private UserProfile user;
     private ShoppingCart cart;
-    private DataSource dataSource;
+    private RestaurantData restaurantData;
+    private List<Order> pastOrders;
 
     // register observer
     private RestaurantsChangeListener listener;
 
-    private OrderManager() {
-        this.dataSource = new DataSource();
-        //this.restaurantList = dataSource.getRestaurantData();
+    private OrderManager(Context context) {
+        this.restaurantData = new RestaurantData(context);
         this.restaurantList = new ArrayList<>();
         this.user = null;
         this.cart = new ShoppingCart();
+        this.pastOrders = new ArrayList<>();
     }
 
     public void startSearchingForRestaurants() {
-        dataSource.setRestaurantsChangeListener(this);
-        dataSource.getListOfNearbyRestaurants();
+        restaurantData.setRestaurantsChangeListener(this);
+        restaurantData.getListOfNearbyRestaurants();
     }
 
-    public static OrderManager init(UserProfile user) {
-        instance = new OrderManager();
+    public static OrderManager init(UserProfile user, Context context) {
+        instance = new OrderManager(context);
         instance.user = user;
         return instance;
     }
 
     public static OrderManager getInstance() {
         if (instance == null) {
-            instance = new OrderManager();
+            instance = new OrderManager(null); // null for now
         }
 
         return instance;
@@ -89,6 +94,26 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
         cart.clear();
     }
 
+    public double getCartTotalPrice() {
+        return cart.getTotalPrice();
+    }
+
+    public Restaurant getCurrentRestaurant() {
+        return currentRestaurant;
+    }
+
+    public void setCurrentRestaurant(Restaurant r) {
+        currentRestaurant = r;
+    }
+
+    public List<Order> getPastOrders() {
+        return this.pastOrders;
+    }
+
+    public void addPastOrder(Order o) {
+        this.pastOrders.add(o);
+    }
+
     public void setRestaurantsChangeListener(RestaurantsChangeListener listener) {
         this.listener = listener;
     }
@@ -97,12 +122,21 @@ public class OrderManager implements DataSource.RestaurantsChangeListener {
     public void onRestaurantsChange(List<Restaurant> restaurants) {
         setRestaurantList(restaurants);
         // update UI that observes this OrderManager class
-        listener.onRestaurantsChange(restaurants);
+        listener.onRestaurantsChange();
+    }
+
+    @Override
+    public void onRestaurantAdded(Restaurant restaurant) {
+        if (!restaurantList.contains(restaurant)) {
+            restaurantList.add(restaurant);
+        }
+        // update UI that observes this OrderManager class
+        listener.onRestaurantsChange();
     }
 
     // This interface is to register UI to observer changes in the list of restaurants in
     // OrderManager class.
     public interface RestaurantsChangeListener {
-        void onRestaurantsChange(List<Restaurant> restaurants);
+        void onRestaurantsChange();
     }
 }

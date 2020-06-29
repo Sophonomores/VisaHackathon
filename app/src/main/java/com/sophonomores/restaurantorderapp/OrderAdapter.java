@@ -17,11 +17,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     private List<Order> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private boolean isCustomerSide;
 
     // data is passed into the constructor
     OrderAdapter(Context context, List<Order> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        isCustomerSide = false;
+    }
+
+    // data is passed into the constructor
+    OrderAdapter(Context context, List<Order> data, boolean isCustomerSide) {
+        this.mInflater = LayoutInflater.from(context);
+        this.mData = data;
+        this.isCustomerSide = isCustomerSide;
     }
 
     // inflates the row layout from xml when needed
@@ -34,11 +43,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(OrderViewHolder holder, int position) {
-        String customerName = mData.get(position).getCustomerName();
-        holder.customerTextView.setText(customerName);
+        Order order = mData.get(position);
 
-        String dishList = mData.get(position).getDishesString();
+        if (!isCustomerSide) {
+            String customerName = order.getCustomerName();
+            holder.customerTextView.setText(customerName);
+        } else {
+            String restaurantName = order.getRestaurantName();
+            holder.customerTextView.setText(restaurantName);
+        }
+
+        String dishList = order.getDishesString();
         holder.dishListTextView.setText(dishList);
+
+        String time = order.getOrderTime();
+        holder.timeTextView.setText(time);
     }
 
     // total number of rows
@@ -51,11 +70,13 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView customerTextView;
         TextView dishListTextView;
+        TextView timeTextView;
 
         OrderViewHolder(View itemView) {
             super(itemView);
             customerTextView = itemView.findViewById(R.id.user_name);
             dishListTextView = itemView.findViewById(R.id.dish_list);
+            timeTextView = itemView.findViewById(R.id.timeTextView);
             itemView.setOnClickListener(this);
         }
 
