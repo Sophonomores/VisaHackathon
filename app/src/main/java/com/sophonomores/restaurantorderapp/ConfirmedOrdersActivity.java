@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 public class ConfirmedOrdersActivity extends AppCompatActivity {
 
@@ -61,6 +62,9 @@ public class ConfirmedOrdersActivity extends AppCompatActivity {
         // specify an adapter
         orderViewAdapter = new OrderAdapter(this, orderManager.getPastOrders(), true);
         orderRecyclerView.setAdapter(orderViewAdapter);
+
+        TextView textView5 = findViewById(R.id.textView5);
+        textView5.setVisibility(orderManager.getPastOrders().size() == 0 ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void goToCustomerMainActivity(View view) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,8 +34,7 @@ public class CardActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add_card) {
-            Intent intent = new Intent(this, AddCardActivity.class);
-            startActivity(intent);
+            onAddCardClicked(null);
         }
 
         return super.onOptionsItemSelected(item);
@@ -44,5 +44,10 @@ public class CardActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void onAddCardClicked(View view) {
+        Intent intent = new Intent(this, AddCardActivity.class);
+        startActivity(intent);
     }
 }

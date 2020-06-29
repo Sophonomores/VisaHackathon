@@ -10,6 +10,7 @@ import com.google.android.gms.nearby.connection.Strategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import androidx.annotation.NonNull;
 
@@ -18,7 +19,6 @@ public class Discoverer {
     private final Context context;
     public static final String DEVICE_NAME = "CLIENT_APP"; // hardcoded for now
     private static final String SERVICE_ID = "com.sophonomores.restaurantorderapp"; // hardcoded for now
-    private final EndpointDiscoveryCallback clientDiscoveryCallback = new ClientDiscoveryCallback();
 
     private final List<String> devices;
 
@@ -31,11 +31,11 @@ public class Discoverer {
         return devices;
     }
 
-    public void startDiscovery() {
+    public void startDiscovery(Consumer<String> callback) {
         DiscoveryOptions discoveryOptions =
                 new DiscoveryOptions.Builder().setStrategy(Strategy.P2P_STAR).build();
         Nearby.getConnectionsClient(context)
-                .startDiscovery(SERVICE_ID, clientDiscoveryCallback, discoveryOptions)
+                .startDiscovery(SERVICE_ID, new ClientDiscoveryCallback(callback), discoveryOptions)
                 .addOnSuccessListener(
                         (Void unused) -> {
                             System.out.println("We are discovering!");
@@ -47,12 +47,19 @@ public class Discoverer {
     }
 
     private class ClientDiscoveryCallback extends EndpointDiscoveryCallback {
+        private Consumer<String> callback;
+
+        public ClientDiscoveryCallback(Consumer<String> callback) {
+            this.callback = callback;
+        }
+
         @Override
         public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
             String message = String.format("%s: Endpoint found: %s", endpointId, discoveredEndpointInfo.toString());
             System.out.println(message);
             if (!devices.contains(endpointId)) {
                 devices.add(endpointId);
+                callback.accept(endpointId);
                 // Use these to make API calls in the app:
 
                 // GET:

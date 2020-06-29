@@ -10,11 +10,6 @@
         android:title="View past orders"
         app:showAsAction="collapseActionView" />
     <item
-        android:id="@+id/action_refresh"
-        android:icon="@android:drawable/stat_notify_sync"
-        android:title="Refresh"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_card"
         android:title="Manage cards"
         app:showAsAction="collapseActionView" />

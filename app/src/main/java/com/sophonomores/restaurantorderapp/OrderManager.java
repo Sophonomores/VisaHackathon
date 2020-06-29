@@ -38,9 +38,9 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
         this.pastOrders = new ArrayList<>();
     }
 
-    public void startSearchingForRestaurants() {
+    public void startSearchingForRestaurants(Runnable r) {
         restaurantData.setRestaurantsChangeListener(this);
-        restaurantData.getListOfNearbyRestaurants();
+        restaurantData.getListOfNearbyRestaurants(r);
     }
 
     public static OrderManager init(UserProfile user, Context context) {
@@ -120,6 +120,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
     @Override
     public void onRestaurantsChange(List<Restaurant> restaurants) {
+        System.out.println("setting restaurant list...");
         setRestaurantList(restaurants);
         // update UI that observes this OrderManager class
         listener.onRestaurantsChange();

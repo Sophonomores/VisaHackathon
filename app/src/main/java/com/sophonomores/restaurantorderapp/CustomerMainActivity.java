@@ -12,6 +12,7 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
 
@@ -23,6 +24,7 @@ public class CustomerMainActivity extends AppCompatActivity
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
     private RecyclerView.LayoutManager restaurantLayoutManager;
+    private TextView textView6;
     private ProgressDialog progressDialog;
     private boolean isLoading = false;
 
@@ -46,11 +48,15 @@ public class CustomerMainActivity extends AppCompatActivity
         }
 
         prepareRestaurantRecyclerView();
+        textView6 = (TextView) findViewById(R.id.textView6);
+        textView6.setVisibility(orderManager.getRestaurantList().size() == 0 ? View.VISIBLE : View.INVISIBLE);
 
         orderManager.setRestaurantsChangeListener(this);
         isLoading = true;
-        orderManager.startSearchingForRestaurants();
-        showProgressDialog();
+        orderManager.startSearchingForRestaurants(() -> {
+            showProgressDialog();
+        });
+//        showProgressDialog();
     }
 
     @Override
@@ -63,11 +69,7 @@ public class CustomerMainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_refresh) {
-            isLoading = true;
-            orderManager.startSearchingForRestaurants();
-            showProgressDialog();
-        } else if (id == R.id.action_card) {
+        if (id == R.id.action_card) {
             Intent intent = new Intent(this, CardActivity.class);
             startActivity(intent);
         } else if (id == R.id.action_profile) {
@@ -119,6 +121,8 @@ public class CustomerMainActivity extends AppCompatActivity
             progressDialog.dismiss();
         isLoading = false;
         restaurantViewAdapter.notifyDataSetChanged();
+        System.out.println("Restaurant list: " + orderManager.getRestaurantList());
+        textView6.setVisibility(orderManager.getRestaurantList().size() == 0 ? View.VISIBLE : View.INVISIBLE);
     }
 
 }
