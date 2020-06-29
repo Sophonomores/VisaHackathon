@@ -1,7 +1,6 @@
 package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
-import android.os.Handler;
 
 import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.entities.Dish;
@@ -37,35 +36,29 @@ public class RestaurantData {
         System.out.println("Restaurant added: " +  restaurant.getName());
     }
 
-    public void getListOfNearbyRestaurants() {
-        if (discoverer == null) {
-            discoverer = new Discoverer(context);
-            discoverer.startDiscovery();
-            new Handler().postDelayed(() -> {
-                processEndpointIds();
-            }, 4000);
-        } else {
-            processEndpointIds();
-        }
+    public void notifyListenerToChangeRestaurants(List<Restaurant> restaurants) {
+        listener.onRestaurantsChange(restaurants);
     }
 
-    private void processEndpointIds() {
+    public void getListOfNearbyRestaurants(Runnable r) {
         if (USE_HARDCODED_VALUES) {
             Restaurant restaurant = makeSteakHouse();
             restaurant.setEndpointId("FAKE");
             notifyListenerToAddRestaurant(restaurant);
             return;
         }
-        List<String> endpointIds = discoverer.getDevices();
-        System.out.println("end points found: " + endpointIds);
-        for (String endpointId : endpointIds) {
-            Messenger messenger = new Messenger(context, Discoverer.DEVICE_NAME);
-            messenger.get(endpointId, ResourceURIs.INFO, (String response) -> {
-                System.out.println("response received: " + response);
-                Gson gson = new Gson();
-                Restaurant restaurant = gson.fromJson(response, Restaurant.class);
-                restaurant.setEndpointId(endpointId);
-                notifyListenerToAddRestaurant(restaurant);
+        if (discoverer == null) {
+            discoverer = new Discoverer(context);
+            discoverer.startDiscovery((endpointId) -> {
+                r.run();
+                Messenger messenger = new Messenger(context, Discoverer.DEVICE_NAME);
+                messenger.get(endpointId, ResourceURIs.INFO, (String response) -> {
+                    System.out.println("response received: " + response);
+                    Gson gson = new Gson();
+                    Restaurant restaurant = gson.fromJson(response, Restaurant.class);
+                    restaurant.setEndpointId(endpointId);
+                    notifyListenerToAddRestaurant(restaurant);
+                });
             });
         }
     }

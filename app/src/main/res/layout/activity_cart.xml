@@ -21,14 +21,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/checkout_button"
         style="@style/Widget.MaterialComponents.Button.Icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:layout_marginEnd="6dp"
         android:layout_marginStart="6dp"
-        android:onClick="goToPayment"
+        android:onClick="onCheckoutButtonClick"
         android:text="Checkout"
         android:textSize="17sp"
         app:icon="@drawable/ic_baseline_payment_24"
@@ -68,7 +68,7 @@
         android:layout_marginStart="20dp"
         android:text="Total"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/checkout_button"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView

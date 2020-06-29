@@ -71,6 +71,10 @@ public class Order {
         return this.time;
     }
 
+    public int getStatus() {
+        return this.status;
+    }
+
     public void setReadyToServe() {
         this.status = READY_TO_SERVE;
     }

@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
 
         String time = order.getOrderTime();
         holder.timeTextView.setText(time);
+
+        switch (order.getStatus()) {
+            case Order.CONFIRMED:
+                holder.statusTextView.setText("PREPARING");
+                holder.statusTextView.setTextColor(Color.parseColor("#F7B600"));
+                break;
+            case Order.READY_TO_SERVE:
+                holder.statusTextView.setText("READY TO COLLECT");
+                holder.statusTextView.setTextColor(Color.GREEN);
+                break;
+            case Order.COLLECTED:
+                holder.statusTextView.setText("COMPLETED");
+                holder.statusTextView.setTextColor(Color.parseColor("#1A1F71"));
+                break;
+        }
     }
 
     // total number of rows
@@ -71,12 +87,14 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         TextView customerTextView;
         TextView dishListTextView;
         TextView timeTextView;
+        TextView statusTextView;
 
         OrderViewHolder(View itemView) {
             super(itemView);
             customerTextView = itemView.findViewById(R.id.user_name);
             dishListTextView = itemView.findViewById(R.id.dish_list);
             timeTextView = itemView.findViewById(R.id.timeTextView);
+            statusTextView = itemView.findViewById(R.id.order_status);
             itemView.setOnClickListener(this);
         }
 

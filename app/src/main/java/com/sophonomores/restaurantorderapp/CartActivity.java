@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+
+import com.sophonomores.restaurantorderapp.biometricauth.BiometricAuth;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
@@ -43,6 +45,10 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private Button checkoutButton;
     private ProgressDialog progressDialog;
 
+    private BiometricAuth biometricAuth;
+
+    private static boolean USE_BIOMETRIC = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,12 +64,24 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        prepareDishRecyclerView();
+
+        biometricAuth = new BiometricAuth(this);
+        biometricAuth.setup(this::goToPayment);
+
+        if (!biometricAuth.canAuthenticate()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+            builder.setMessage(R.string.setup_lock_screen)
+                    .setTitle("Error")
+                    .setPositiveButton("OK", (dialog, which) -> {});
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
         textView = (TextView) findViewById(R.id.textView);
         priceTextView = (TextView) findViewById(R.id.priceTextView);
-        checkoutButton = findViewById(R.id.button);
+        checkoutButton = findViewById(R.id.checkout_button);
         updateUiComponents();
-
-        prepareDishRecyclerView();
     }
 
     @Override
@@ -95,7 +113,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
             dishAdapter.notifyDataSetChanged();
         textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
         priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
-        checkoutButton.setEnabled(cart.getCount() != 0);
+        checkoutButton.setEnabled(cart.getCount() != 0 && (!USE_BIOMETRIC || biometricAuth.canAuthenticate()));
     }
 
     private void prepareDishRecyclerView() {
@@ -126,7 +144,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         updateUiComponents();
     }
 
-    public void goToPayment(View view) {
+    public void goToPayment() {
         // There is a bug with order manager: the cart should only allow orders from one restaurant.
         Restaurant currentRestaurant = orderManager.getCurrentRestaurant();
         Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes());
@@ -166,5 +184,12 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         if (progressDialog != null)
             progressDialog.dismiss();
         dialog.show();
+    }
+
+    public void onCheckoutButtonClick(View view) {
+        if (USE_BIOMETRIC)
+            biometricAuth.authenticate(String.format("$%.2f", cart.getTotalPrice()), "Visa-1234");
+        else
+            goToPayment();
     }
 }
