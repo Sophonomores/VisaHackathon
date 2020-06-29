@@ -42,44 +42,14 @@ public class VppConnect {
             "  \"cardAcceptr\": {" +
             "    \"clientId\": \"0123456789012345678901234567893\"" +
             "  }," +
-            "  \"freeFormDescrptnData\": \"Freeformdata\"," +
             "  \"msgIdentfctn\": {" +
             "    \"correlatnId\": \"14bc567d90f23e56a8f045\"," +
-            "    \"origId\": \"123451234567890\"" +
             "  }," +
-            "  \"msgTransprtData\": \"TransportData\"," +
             "  \"transctn\": {" +
-            "    \"eComData\": {" +
-            "      \"digitalGoods\": \"true\"," +
-            "      \"eciCd\": \"5\"," +
-            "      \"xid\": \"EEC4567F90123A5678B0123EA67890D2345678FF\"" +
-            "    }," +
-            "    \"localDtTm\": \"2020-06-25T16:44:04\"," +
-            "    \"partialAuthInd\": \"true\"," +
-            "    \"posData\": {" +
-            "      \"envrnmnt\": \"eCom\"," +
-            "      \"panEntryMode\": \"OnFile\"," +
-            "      \"panSrce\": \"VCIND\"" +
-            "    }," +
             "    \"tranAmt\": {" +
             "      \"amt\": \"51.29\"," +
-            "      \"numCurrCd\": \"840\"" +
             "    }," +
-            "    \"tranDesc\": \"Transactiondescription\"" +
             "  }," +
-            "  \"verfctnData\": {" +
-            "    \"billngAddr\": {" +
-            "      \"addrLn\": \"PO Box 12345\"," +
-            "      \"postlCd\": \"12345\"" +
-            "    }" +
-            "  }," +
-            "  \"riskAssessmntData\": {" +
-            "    \"lowVlExmptn\": \"true\"," +
-            "    \"traExmptn\": \"true\"," +
-            "    \"trustdMerchntExmptn\": \"true\"," +
-            "    \"scpExmptn\": \"true\"," +
-            "    \"delgtdAthntctn\": \"true\"" +
-            "  }" +
             "}";
 
     // List of available API endpoints. Currently, access only available to authorization API.
