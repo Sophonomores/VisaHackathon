@@ -29,15 +29,16 @@ import javax.net.ssl.X509TrustManager;
 public class VppRequestQueue {
     private static VppRequestQueue instance = null;
     private RequestQueue requestQueue;
+    public static Context context;
 
-    private VppRequestQueue(Context context) {
-        HurlStack hurlStack = new HurlStack(null, generateSSLSocketFactory(context));
+    private VppRequestQueue() {
+        HurlStack hurlStack = new HurlStack(null, generateSSLSocketFactory());
         requestQueue = Volley.newRequestQueue(context.getApplicationContext(), hurlStack);
     }
 
-    public static synchronized VppRequestQueue getInstance(Context context) {
+    public static synchronized VppRequestQueue getInstance() {
         if (instance == null) {
-            instance = new VppRequestQueue(context);
+            instance = new VppRequestQueue();
         }
 
         return instance;
@@ -60,7 +61,7 @@ public class VppRequestQueue {
      *
      * @return the SSLSocketFactory which contains the certificate for two-way SSL.
      */
-    private static SSLSocketFactory generateSSLSocketFactory(Context context) {
+    private static SSLSocketFactory generateSSLSocketFactory() {
         SSLSocketFactory sslSocketFactory;
         KeyStore keyStore;
         X509TrustManager trustManager;

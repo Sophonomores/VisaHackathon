@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
-import com.sophonomores.restaurantorderapp.vpp.VppConnect;
+import com.sophonomores.restaurantorderapp.vpp.VppRequestQueue;
 
 public class MerchantMainActivity extends AppCompatActivity
         implements OrderAdapter.ItemClickListener, MerchantManager.OrderListener {
@@ -47,6 +47,8 @@ public class MerchantMainActivity extends AppCompatActivity
         merchantManager.setOrderListener(this);
         merchantManager.startReceivingOrders();
 
+        // Set up the request queue
+        VppRequestQueue.context = this;
     }
 
     public static MerchantManager getMerchantManager() {

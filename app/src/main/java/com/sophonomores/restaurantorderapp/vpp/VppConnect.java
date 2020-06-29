@@ -1,7 +1,5 @@
 package com.sophonomores.restaurantorderapp.vpp;
 
-import android.content.Context;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -60,16 +58,15 @@ public class VppConnect {
      * Payload should be given as a clean text or unencrypted.
      * VppConnect will handle the encryption and the decryption.
      *
-     * @param context is the current activity that would like to communicate with this API.
      * @param callback is the function to call after the response has been decrypted
      */
-    public static void authorize(Context context, String payload, Consumer<String> callback) {
+    public static void authorize(String payload, Consumer<String> callback) {
         String url = "https://sandbox.api.visa.com/acs/v1/payments/authorizations";
-        RequestQueue queue = VppRequestQueue.getInstance(context).getRequestQueue();
+        RequestQueue queue = VppRequestQueue.getInstance().getRequestQueue();
 
         JSONObject jsonPayload = null;
         try {
-            jsonPayload = new JSONObject(encryptPayload(context, payload));
+            jsonPayload = new JSONObject(encryptPayload(payload));
         } catch (Exception ex) {
             System.out.println("An error occur while converting string to JSON Object");
             ex.printStackTrace();
@@ -79,7 +76,7 @@ public class VppConnect {
                 (Response.Listener<JSONObject>) response -> {
             System.out.println("Response received!!!");
             System.out.println("Encrypted response: " + response.toString());
-            String decryptedResponse = decryptResponse(context, response);
+            String decryptedResponse = decryptResponse(response);
             System.out.println("Decrypted response: " + decryptedResponse);
             callback.accept(decryptedResponse);
         });
@@ -88,7 +85,7 @@ public class VppConnect {
     }
 
     // Return empty string and some logging in the case of error
-    private static String encryptPayload(Context context, String payload) {
+    private static String encryptPayload(String payload) {
         // Define the JWE spec (RSA_OAEP_256 + AES_128_GCM)
         JWEHeader.Builder headerBuilder = new JWEHeader.Builder(
                 JWEAlgorithm.RSA_OAEP_256,
@@ -105,7 +102,7 @@ public class VppConnect {
 
         try {
             String pemEncodedPublicKey = IOUtils.readInputStreamToString(
-                    context.getResources().openRawResource(R.raw.server_cert_for_mle),
+                    VppRequestQueue.context.getResources().openRawResource(R.raw.server_cert_for_mle),
                     Charset.forName("UTF-8"));
 
             CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
@@ -123,13 +120,13 @@ public class VppConnect {
     }
 
     // Return empty string and some logging in the case of error
-    private static String decryptResponse(Context context, JSONObject response) {
+    private static String decryptResponse(JSONObject response) {
         String decryptedData = "";
 
         try {
             JWEObject encryptedData = JWEObject.parse(response.getString("encData"));
             String pemEncodedPrivateKey = IOUtils.readInputStreamToString(
-                    context.getResources().openRawResource(R.raw.client_private_key_cert_for_mle),
+                    VppRequestQueue.context.getResources().openRawResource(R.raw.client_private_key_cert_for_mle),
                     Charset.forName("UTF-8"));
 
             JWK jwk = JWK.parseFromPEMEncodedObjects(pemEncodedPrivateKey);
