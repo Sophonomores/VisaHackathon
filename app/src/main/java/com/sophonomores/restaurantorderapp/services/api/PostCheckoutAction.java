@@ -19,9 +19,9 @@ public class PostCheckoutAction extends Action {
     public String execute(@Nullable String input) {
         // TODO: Change dummyPayload with actual input
         // TODO: Modify the response callback
-        VppConnect.authorize(this, VppConnect.dummyPayload, (response) -> {
-            System.out.println("Clean response is received: " + response);
-        });
+//        VppConnect.authorize(this, VppConnect.dummyPayload, (response) -> {
+//            System.out.println("Clean response is received: " + response);
+//        });
 
         OrderData.notifyListenerToAddOrder(new Gson().fromJson(input, Order.class));
         return StatusCode.OK;
