@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,7 +16,8 @@ import com.sophonomores.restaurantorderapp.entities.Restaurant;
 
 import java.util.List;
 
-public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
+public class MenuActivity extends AppCompatActivity implements DishAdapterWithQuantity
+        .ItemClickListener {
 
     private OrderManager orderManager;
     private List<Dish> dishes;
@@ -29,17 +31,33 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        //orderManager = CustomerMainActivity.getOrderManager();
         orderManager = OrderManager.getInstance();
 
         Intent intent = getIntent();
         int restaurantIndex = intent.getIntExtra(CustomerMainActivity.RESTAURANT_INDEX, -1);
         Restaurant restaurant = orderManager.getRestaurantList().get(restaurantIndex);
-        dishes = restaurant.getDishes();
+        orderManager.setCurrentRestaurant(restaurant);
+        dishes = restaurant.getMenu();
 
-        getSupportActionBar().setSubtitle("Menu at " + restaurant.getName());
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle(restaurant.getName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         prepareMenuRecyclerView(dishes);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        menuViewAdapter.notifyDataSetChanged();
     }
 
     private void prepareMenuRecyclerView(List<Dish> dishes) {
@@ -60,8 +78,8 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
         menuRecyclerView.setLayoutManager(menuLayoutManager);
 
         // specify an adapter
-        menuViewAdapter = new DishAdapter(this, dishes);
-        ((DishAdapter) menuViewAdapter).setClickListener(this);
+        menuViewAdapter = new DishAdapterWithQuantity(this, dishes, orderManager.getCart());
+        ((DishAdapterWithQuantity) menuViewAdapter).setClickListener(this);
         menuRecyclerView.setAdapter(menuViewAdapter);
     }
 
@@ -69,8 +87,9 @@ public class MenuActivity extends AppCompatActivity implements DishAdapter.ItemC
     public void onItemClick(View view, int position) {
         Dish dish = dishes.get(position);
         orderManager.addDishToCart(dish);
+        menuViewAdapter.notifyDataSetChanged();
 
-        String addCartText = dish.getName() + " has been added to your Shopping Cart!";
+        String addCartText = "Added to cart: " + dish.getName();
         Toast.makeText(this, addCartText, Toast.LENGTH_SHORT).show();
     }
 

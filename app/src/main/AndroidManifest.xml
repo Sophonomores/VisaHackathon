@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ConfirmedOrdersActivity"></activity>
+        <activity android:name=".ConfirmedOrdersActivity" />
         <activity android:name=".PaymentActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -33,6 +33,10 @@
         <activity android:name=".MenuActivity" />
         <activity android:name=".CustomerMainActivity" />
         <activity android:name=".MerchantMainActivity" />
+        <activity android:name=".OrderActivity" />
+        <activity android:name=".CardActivity" />
+        <activity android:name=".AddCardActivity" />
+        <activity android:name=".ProfileActivity" />
     </application>
 
 </manifest>

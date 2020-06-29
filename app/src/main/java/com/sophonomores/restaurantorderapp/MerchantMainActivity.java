@@ -1,9 +1,11 @@
 package com.sophonomores.restaurantorderapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.vpp.VppConnect;
 
-public class MerchantMainActivity extends AppCompatActivity implements OrderAdapter.ItemClickListener {
+public class MerchantMainActivity extends AppCompatActivity
+        implements OrderAdapter.ItemClickListener, MerchantManager.OrderListener {
 
     private static MerchantManager merchantManager;
 
@@ -26,11 +29,24 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_merchant);
 
-        Restaurant restaurant = new Restaurant("Steak House", "western", null); // hardcoded
-        merchantManager = new MerchantManager(restaurant);
-        getSupportActionBar().setSubtitle("Confirmed Orders");
+        Restaurant restaurant = RestaurantData.makeSteakHouse(); // hardcoded
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setTitle(restaurant.getName());
+        getSupportActionBar().setSubtitle("Confirmed orders");
+
+        if (MerchantManager.isInitialised()) {
+            merchantManager = MerchantManager.getInstance();
+        } else {
+            merchantManager = MerchantManager.init(restaurant, this);
+        }
 
         prepareOrderRecyclerView();
+
+        merchantManager.setOrderListener(this);
+        merchantManager.startReceivingOrders();
+
     }
 
     public static MerchantManager getMerchantManager() {
@@ -60,20 +76,16 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         orderRecyclerView.setAdapter(orderViewAdapter);
     }
 
-    // TODO: Change this function into a callback for each new order received
-    // TODO: Set request queue as a singleton,
-    //  because its lifetime is the same with applicateino ifetime
-    public void simulateVppPayment(View view) {
-        VppConnect.authorize(this, VppConnect.dummyPayload, (response) -> {
-            System.out.println("Clean response is received: " + response);
-        });
+    public void onItemClick(View view, int position) {
+        Intent intent = new Intent(this, OrderActivity.class);
+        intent.putExtra(ORDER_INDEX, position);
+        startActivity(intent);
     }
 
-    // TODO: implement orderactivity
-    public void onItemClick(View view, int position) {
-//        Intent intent = new Intent(this, OrderActivity.class);
-//        intent.putExtra(ORDER_INDEX, position);
-//        startActivity(intent);
+    @Override
+    public void onOrderDataChange() {
+        orderViewAdapter.notifyDataSetChanged();
     }
+
 }
 

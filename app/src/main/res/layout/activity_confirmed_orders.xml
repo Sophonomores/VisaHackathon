@@ -6,20 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ConfirmedOrdersActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="View confirmed orders here"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/toolbar" />
 
-    <Button
-        android:id="@+id/view_restaurants_button"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/order_recycler_view"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="56dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Order more food!"
-        android:onClick="goToCustomerMainActivity"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:text="You have not made any orders!"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

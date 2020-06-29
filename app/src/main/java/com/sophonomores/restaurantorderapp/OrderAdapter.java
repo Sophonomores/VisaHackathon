@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,20 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     private List<Order> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private boolean isCustomerSide;
 
     // data is passed into the constructor
     OrderAdapter(Context context, List<Order> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        isCustomerSide = false;
+    }
+
+    // data is passed into the constructor
+    OrderAdapter(Context context, List<Order> data, boolean isCustomerSide) {
+        this.mInflater = LayoutInflater.from(context);
+        this.mData = data;
+        this.isCustomerSide = isCustomerSide;
     }
 
     // inflates the row layout from xml when needed
@@ -34,11 +44,36 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(OrderViewHolder holder, int position) {
-        String customerName = mData.get(position).getCustomerName();
-        holder.customerTextView.setText(customerName);
+        Order order = mData.get(position);
 
-        String dishList = mData.get(position).getDishesString();
+        if (!isCustomerSide) {
+            String customerName = order.getCustomerName();
+            holder.customerTextView.setText(customerName);
+        } else {
+            String restaurantName = order.getRestaurantName();
+            holder.customerTextView.setText(restaurantName);
+        }
+
+        String dishList = order.getDishesString();
         holder.dishListTextView.setText(dishList);
+
+        String time = order.getOrderTime();
+        holder.timeTextView.setText(time);
+
+        switch (order.getStatus()) {
+            case Order.CONFIRMED:
+                holder.statusTextView.setText("PREPARING");
+                holder.statusTextView.setTextColor(Color.parseColor("#F7B600"));
+                break;
+            case Order.READY_TO_SERVE:
+                holder.statusTextView.setText("READY TO COLLECT");
+                holder.statusTextView.setTextColor(Color.GREEN);
+                break;
+            case Order.COLLECTED:
+                holder.statusTextView.setText("COMPLETED");
+                holder.statusTextView.setTextColor(Color.parseColor("#1A1F71"));
+                break;
+        }
     }
 
     // total number of rows
@@ -51,11 +86,15 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView customerTextView;
         TextView dishListTextView;
+        TextView timeTextView;
+        TextView statusTextView;
 
         OrderViewHolder(View itemView) {
             super(itemView);
             customerTextView = itemView.findViewById(R.id.user_name);
             dishListTextView = itemView.findViewById(R.id.dish_list);
+            timeTextView = itemView.findViewById(R.id.timeTextView);
+            statusTextView = itemView.findViewById(R.id.order_status);
             itemView.setOnClickListener(this);
         }
 

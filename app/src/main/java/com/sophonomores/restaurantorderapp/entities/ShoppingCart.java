@@ -1,8 +1,9 @@
 package com.sophonomores.restaurantorderapp.entities;
 
-import com.sophonomores.restaurantorderapp.entities.Dish;
+import com.sophonomores.restaurantorderapp.DishAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ShoppingCart {
@@ -34,7 +35,23 @@ public class ShoppingCart {
     }
 
     public void clear() {
-        dishes = new ArrayList<>();
+        dishes.clear();
+    }
+
+    public Double getTotalPrice() {
+        double total = 0;
+        for (Dish dish : dishes) {
+            total += dish.getPrice();
+        }
+        return total;
+    }
+
+    public int getCount() {
+        return dishes.size();
+    }
+
+    public int getCountForDish(Dish dish) {
+        return Collections.frequency(dishes, dish);
     }
 
     // for testing

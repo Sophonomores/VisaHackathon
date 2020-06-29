@@ -1,18 +1,20 @@
 package com.sophonomores.restaurantorderapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
-import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
-
-import java.util.List;
 
 public class CustomerMainActivity extends AppCompatActivity
         implements RestaurantAdapter.ItemClickListener, OrderManager.RestaurantsChangeListener {
@@ -22,6 +24,9 @@ public class CustomerMainActivity extends AppCompatActivity
     private RecyclerView restaurantRecyclerView;
     private RecyclerView.Adapter restaurantViewAdapter;
     private RecyclerView.LayoutManager restaurantLayoutManager;
+    private TextView textView6;
+    private ProgressDialog progressDialog;
+    private boolean isLoading = false;
 
     public static final String RESTAURANT_INDEX = "RESTAURANT_INDEX";
 
@@ -30,29 +35,56 @@ public class CustomerMainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_customer);
 
-        UserProfile user = new UserProfile("username"); // hardcoded
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setSubtitle("Eateries near me");
+
+        UserProfile user = new UserProfile("John Doe"); // hardcoded
 
         if (OrderManager.isInitialised()) {
             orderManager = OrderManager.getInstance();
         } else {
-            orderManager = OrderManager.init(user);
+            orderManager = OrderManager.init(user, this);
         }
 
-        getSupportActionBar().setSubtitle("Eateries near me");
         prepareRestaurantRecyclerView();
+        textView6 = (TextView) findViewById(R.id.textView6);
+        textView6.setVisibility(orderManager.getRestaurantList().size() == 0 ? View.VISIBLE : View.INVISIBLE);
 
         orderManager.setRestaurantsChangeListener(this);
-        orderManager.startSearchingForRestaurants();
+        isLoading = true;
+        orderManager.startSearchingForRestaurants(() -> {
+            showProgressDialog();
+        });
+//        showProgressDialog();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main_customer, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_card) {
+            Intent intent = new Intent(this, CardActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_profile) {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.action_past_order) {
+            Intent intent = new Intent(this, ConfirmedOrdersActivity.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void prepareRestaurantRecyclerView() {
         restaurantRecyclerView = (RecyclerView) findViewById(R.id.restaurant_recycler_view);
-
-        // add divider
-        DividerItemDecoration dividerItemDecoration =
-                new DividerItemDecoration(restaurantRecyclerView.getContext(),
-                                          LinearLayoutManager.VERTICAL);
-        restaurantRecyclerView.addItemDecoration(dividerItemDecoration);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -68,6 +100,15 @@ public class CustomerMainActivity extends AppCompatActivity
         restaurantRecyclerView.setAdapter(restaurantViewAdapter);
     }
 
+    private void showProgressDialog() {
+        progressDialog = ProgressDialog.show(CustomerMainActivity.this, "", "Loading...", true);
+        new Handler().postDelayed(() -> {
+            if (!isLoading) {
+                progressDialog.dismiss();
+            }
+        }, 1000);
+    }
+
     public void onItemClick(View view, int position) {
         Intent intent = new Intent(this, MenuActivity.class);
         intent.putExtra(RESTAURANT_INDEX, position);
@@ -75,8 +116,13 @@ public class CustomerMainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRestaurantsChange(List<Restaurant> restaurants) {
+    public void onRestaurantsChange() {
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        isLoading = false;
         restaurantViewAdapter.notifyDataSetChanged();
+        System.out.println("Restaurant list: " + orderManager.getRestaurantList());
+        textView6.setVisibility(orderManager.getRestaurantList().size() == 0 ? View.VISIBLE : View.INVISIBLE);
     }
 
 }

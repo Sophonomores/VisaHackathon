@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.sophonomores.restaurantorderapp.services.Advertiser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,10 +35,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goToMerchantMainActivity(View view) {
-        // TODO: to be implemented
+        new Advertiser(MainActivity.this).startAdvertising();
         Intent intent = new Intent(this, MerchantMainActivity.class);
         startActivity(intent);
-//        new Advertiser(MainActivity.this).startAdvertising();
     }
 
 }
