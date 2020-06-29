@@ -30,26 +30,6 @@ import java.util.function.Consumer;
  * VppConnect will automatically use Two-way SSL and MLE to communicate with the API.
  */
 public class VppConnect {
-    public static final String dummyPayload = " {" +
-            "  \"acctInfo\": {" +
-            "    \"primryAcctNum\": {" +
-            "      \"pan\": \"4111111111111111\"," +
-            "      \"panExpDt\": \"2019-12\"" +
-            "    }" +
-            "  }," +
-            "  \"cardAcceptr\": {" +
-            "    \"clientId\": \"0123456789012345678901234567893\"" +
-            "  }," +
-            "  \"msgIdentfctn\": {" +
-            "    \"correlatnId\": \"14bc567d90f23e56a8f045\"," +
-            "  }," +
-            "  \"transctn\": {" +
-            "    \"tranAmt\": {" +
-            "      \"amt\": \"51.29\"," +
-            "    }," +
-            "  }," +
-            "}";
-
     // List of available API endpoints. Currently, access only available to authorization API.
     private static final String AUTHORIZATION_URL = "https://sandbox.api.visa.com/acs/v1/payments/authorizations";
 

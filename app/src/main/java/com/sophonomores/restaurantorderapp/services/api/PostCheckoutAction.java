@@ -9,6 +9,7 @@ import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.vpp.VppAuthorizationPayload;
 import com.sophonomores.restaurantorderapp.vpp.VppConnect;
 
 import java.util.ArrayList;
@@ -18,13 +19,18 @@ import java.util.List;
 public class PostCheckoutAction extends Action {
     @Override
     public String execute(@Nullable String input) {
-        // TODO: Change dummyPayload with actual input
+        // TODO: Insert PAN into the payload
         // TODO: Modify the response callback
-        VppConnect.authorize(VppConnect.dummyPayload, (response) -> {
+        Order order = new Gson().fromJson(input, Order.class);
+
+        VppAuthorizationPayload payload = new VppAuthorizationPayload();
+        payload.transactionAmount = order.getTotalPrice();
+
+        VppConnect.authorize(payload.toString(), (response) -> {
             System.out.println("Clean response is received: " + response);
         });
 
-        OrderData.notifyListenerToAddOrder(new Gson().fromJson(input, Order.class));
+        OrderData.notifyListenerToAddOrder(order);
         return StatusCode.OK;
     }
 
