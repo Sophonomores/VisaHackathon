@@ -28,6 +28,8 @@ public class PostCheckoutAction extends Action {
 
         VppConnect.authorize(payload.toString(), (response) -> {
             System.out.println("Clean response is received: " + response);
+        }, (statusCode) -> {
+            System.out.println("We received this error status code: " + statusCode);
         });
 
         OrderData.notifyListenerToAddOrder(order);

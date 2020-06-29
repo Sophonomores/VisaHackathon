@@ -38,9 +38,17 @@ public class VppConnect {
      * Payload should be given as a clean text or unencrypted.
      * VppConnect will handle the encryption and the decryption.
      *
-     * @param callback is the function to call after the response has been decrypted
+     * @param responseCallback is the function to call after the response has been decrypted.
+     *                         Response will be provided in String.
+     *
+     * @param errorCallback is the function to call after receiving an error response.
+     *                      In other words, anything other than 200 OK response will be sent to this
+     *                      callback. The Error status code will be given as Integer.
      */
-    public static void authorize(String payload, Consumer<String> callback) {
+    public static void authorize(String payload,
+                                 Consumer<String> responseCallback,
+                                 Consumer<Integer> errorCallback
+    ) {
         String url = "https://sandbox.api.visa.com/acs/v1/payments/authorizations";
         RequestQueue queue = VppRequestQueue.getInstance().getRequestQueue();
 
@@ -58,7 +66,10 @@ public class VppConnect {
             System.out.println("Encrypted response: " + response.toString());
             String decryptedResponse = decryptResponse(response);
             System.out.println("Decrypted response: " + decryptedResponse);
-            callback.accept(decryptedResponse);
+            responseCallback.accept(decryptedResponse);
+        }, (Response.ErrorListener) error -> {
+            System.out.println("Receive an error code!!!");
+            errorCallback.accept(error.networkResponse.statusCode);
         });
 
         queue.add(req);
