@@ -1,5 +1,6 @@
 package com.sophonomores.restaurantorderapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
@@ -104,8 +105,7 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
     //  because its lifetime is the same with applicateino ifetime
     public void simulateVppPayment(View view) {
         String url = "https://sandbox.api.visa.com/acs/v1/payments/authorizations";
-        HurlStack hurlStack = new HurlStack(null, generateSSLSocketFactory());
-        RequestQueue queue = Volley.newRequestQueue(getApplicationContext(), hurlStack);
+        RequestQueue queue = VppRequestQueue.getInstance(this).getRequestQueue();
 
         JSONObject payload = null;
         try {
@@ -232,48 +232,6 @@ public class MerchantMainActivity extends AppCompatActivity implements OrderAdap
         return decryptedData;
     }
 
-    private static final String P12PASSWORD = "GO_BLE_GO";
-
-    private SSLSocketFactory generateSSLSocketFactory() {
-        SSLSocketFactory sslSocketFactory;
-        KeyStore keyStore;
-        X509TrustManager trustManager;
-
-        try {
-            keyStore = KeyStore.getInstance("PKCS12");
-            InputStream is = getResources().openRawResource(R.raw.restaurant_order_key_and_cert_bundle);
-            keyStore.load(is, P12PASSWORD.toCharArray());
-
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
-            kmf.init(keyStore, P12PASSWORD.toCharArray());
-
-            KeyManager[] keyManagers = kmf.getKeyManagers();
-
-            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                    TrustManagerFactory.getDefaultAlgorithm());
-
-            trustManagerFactory.init((KeyStore) null);
-            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-                throw new IllegalStateException("Unexpected default trust managers:"
-                        + Arrays.toString(trustManagers));
-            }
-            trustManager = (X509TrustManager) trustManagers[0];
-
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-
-            sslContext.init(keyManagers, new TrustManager[]{trustManager}, null);
-            sslSocketFactory = sslContext.getSocketFactory();
-            System.out.println("Succesfully create SSL Socket!!!");
-        } catch (Exception ex) {
-            System.out.println("Something went wrong while generating SSL Socket");
-            ex.printStackTrace();
-            sslSocketFactory = null;
-        }
-
-        return sslSocketFactory;
-    }
-
     // TODO: implement orderactivity
     public void onItemClick(View view, int position) {
 //        Intent intent = new Intent(this, OrderActivity.class);
@@ -306,5 +264,88 @@ class VppRequest extends JsonObjectRequest {
         // Add Key Id header for MLE
         currentHeader.put("keyId", MLE_KEY_ID);
         return currentHeader;
+    }
+}
+
+/**
+ * VppRequestQueue acts as a singleton wrapper for RequestQueue.
+ * Having a single instance of RequestQueue will be beneficial for merchant app that
+ * will make request constantly.
+ *
+ * Reference: https://developer.android.com/training/volley/requestqueue#singleton
+ */
+class VppRequestQueue {
+    private static VppRequestQueue instance = null;
+    private RequestQueue requestQueue;
+
+    private VppRequestQueue(Context context) {
+        HurlStack hurlStack = new HurlStack(null, generateSSLSocketFactory(context));
+        requestQueue = Volley.newRequestQueue(context.getApplicationContext(), hurlStack);
+    }
+
+    public static synchronized VppRequestQueue getInstance(Context context) {
+        if (instance == null) {
+            instance = new VppRequestQueue(context);
+        }
+
+        return instance;
+    }
+
+    public RequestQueue getRequestQueue() {
+        return requestQueue;
+    }
+
+    /**
+     * Export password that were used while combining between certificate and private key.
+     */
+    private static final String P12PASSWORD = "GO_BLE_GO";
+
+    /**
+     * This function simply follow the multi-step protocol to convert our certificate into
+     * an SSLSocketFactory. Our certificate here refers to the combination between the project
+     * certificate and private key using openssl as mentioned here:
+     * https://developer.visa.com/pages/working-with-visa-apis/two-way-ssl
+     *
+     * @return the SSLSocketFactory which contains the certificate for two-way SSL.
+     */
+    private static SSLSocketFactory generateSSLSocketFactory(Context context) {
+        SSLSocketFactory sslSocketFactory;
+        KeyStore keyStore;
+        X509TrustManager trustManager;
+
+        try {
+            keyStore = KeyStore.getInstance("PKCS12");
+            InputStream is = context.getResources()
+                    .openRawResource(R.raw.restaurant_order_key_and_cert_bundle);
+            keyStore.load(is, P12PASSWORD.toCharArray());
+
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+            kmf.init(keyStore, P12PASSWORD.toCharArray());
+
+            KeyManager[] keyManagers = kmf.getKeyManagers();
+
+            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                    TrustManagerFactory.getDefaultAlgorithm());
+
+            trustManagerFactory.init((KeyStore) null);
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                throw new IllegalStateException("Unexpected default trust managers:"
+                        + Arrays.toString(trustManagers));
+            }
+            trustManager = (X509TrustManager) trustManagers[0];
+
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+
+            sslContext.init(keyManagers, new TrustManager[]{trustManager}, null);
+            sslSocketFactory = sslContext.getSocketFactory();
+            System.out.println("Succesfully create SSL Socket!!!");
+        } catch (Exception ex) {
+            System.out.println("Something went wrong while generating SSL Socket");
+            ex.printStackTrace();
+            sslSocketFactory = null;
+        }
+
+        return sslSocketFactory;
     }
 }
