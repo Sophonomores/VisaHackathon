@@ -168,6 +168,10 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                                 handlePaymentFailure();
                                 return;
                             }
+                            if(response.contains("Unavailable:")) {
+                                handleItemsUnavailable(response);
+                                return;
+                            }
                             handleCheckoutSuccess(myOrder, Integer.parseInt(response));
 
                         });
@@ -210,6 +214,19 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Unable to connect to Visa at the moment. Please contact the merchant for more information.")
                 .setTitle("Payment failed")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {});
+        AlertDialog dialog = builder.create();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        dialog.show();
+    }
+
+    private void handleItemsUnavailable(String response) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        String message = response.substring(response.indexOf(":") + 1, response.length() - 1);
+        builder.setMessage("The following item(s) are not available:\n" + message)
+                .setTitle("Items unavailable")
                 .setCancelable(false)
                 .setPositiveButton("OK", (dialog, which) -> {});
         AlertDialog dialog = builder.create();

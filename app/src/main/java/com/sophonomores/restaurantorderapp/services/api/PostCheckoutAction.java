@@ -7,6 +7,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.sophonomores.restaurantorderapp.MerchantManager;
 import com.sophonomores.restaurantorderapp.OrderData;
 import com.sophonomores.restaurantorderapp.RestaurantData;
 import com.sophonomores.restaurantorderapp.entities.Dish;
@@ -27,6 +28,17 @@ public class PostCheckoutAction extends Action {
         // TODO: Insert PAN into the payload
         // TODO: Modify the response callback
         Order order = new Gson().fromJson(input, Order.class);
+        MerchantManager manager = MerchantManager.getInstance();
+        List<Dish> unavailableItems = manager.checkOrderAvailability(order);
+        if (unavailableItems.size() > 0) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Unavailable:");
+            for(Dish d : unavailableItems) {
+                sb.append(d.getName() + ",");
+            }
+            consumer.accept(sb.toString());
+            return;
+        }
 
         VppAuthorizationPayload payload = new VppAuthorizationPayload();
         if (order.getTotalPrice() == 11.11)

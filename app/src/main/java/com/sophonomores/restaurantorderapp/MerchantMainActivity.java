@@ -2,6 +2,8 @@ package com.sophonomores.restaurantorderapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,6 +60,24 @@ public class MerchantMainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         orderViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_merchant_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_view_menu) {
+            Intent intent = new Intent(this, MerchantMenuActivity.class);
+            startActivity(intent);
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public static MerchantManager getMerchantManager() {
