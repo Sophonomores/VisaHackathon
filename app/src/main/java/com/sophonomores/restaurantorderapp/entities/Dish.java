@@ -4,10 +4,12 @@ public class Dish {
 
     private String name;
     private double price;
+    private boolean isAvailable;
 
     public Dish(String name, double price) {
         this.name = name;
         this.price = price;
+        isAvailable = true;
     }
 
     public String getName() {
@@ -16,6 +18,14 @@ public class Dish {
 
     public double getPrice() {
         return price;
+    }
+
+    public boolean getAvailability() {
+        return isAvailable;
+    }
+
+    public void setAvailable(boolean isAvailable) {
+        this.isAvailable = isAvailable;
     }
 
     @Override

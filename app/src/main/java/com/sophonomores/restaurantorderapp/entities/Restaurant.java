@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp.entities;
 
 import java.util.List;
+import java.util.Optional;
 
 public class Restaurant {
 
@@ -45,6 +46,21 @@ public class Restaurant {
 
     public String getEndpointId() {
         return endpointId;
+    }
+
+    public Dish getDish(String dishName) {
+        Optional<Dish> dish = menu.stream().filter((Dish d) -> {
+            return d.getName().equals(dishName);
+        }).findFirst();
+        return dish.orElse(null);
+    }
+
+    public void pauseDish(String dishName) {
+        getDish(dishName).setAvailable(false);
+    }
+
+    public void continueDish(String dishName) {
+        getDish(dishName).setAvailable(true);
     }
 
     // simplified version

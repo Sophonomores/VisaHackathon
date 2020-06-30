@@ -1,6 +1,7 @@
 package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,13 @@ public class DishAdapter extends RecyclerView.Adapter<DishAdapter.DishViewHolder
     @Override
     public void onBindViewHolder(DishViewHolder holder, int position) {
         String dishName = mData.get(position).getName();
-        holder.dishNameTextView.setText(dishName);
+        if (mData.get(position).getAvailability()) {
+            holder.dishNameTextView.setTextColor(Color.BLACK);
+            holder.dishNameTextView.setText(dishName);
+        } else {
+            holder.dishNameTextView.setTextColor(Color.GRAY);
+            holder.dishNameTextView.setText(dishName + " (Unavailable)");
+        }
 
         String dishPrice = String.format("$%.2f", mData.get(position).getPrice());
         holder.dishPriceTextView.setText(dishPrice);
