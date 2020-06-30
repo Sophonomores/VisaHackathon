@@ -88,6 +88,10 @@ public class Order {
         this.status = READY_TO_SERVE;
     }
 
+    public void setCollected() {
+        this.status = COLLECTED;
+    }
+
     public int getId() {
         return this.id;
     }

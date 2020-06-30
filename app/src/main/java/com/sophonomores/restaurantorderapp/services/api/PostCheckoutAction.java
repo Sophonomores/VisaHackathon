@@ -36,7 +36,6 @@ public class PostCheckoutAction extends Action {
         System.out.println("Processing payment...");
         VppConnect.authorize(payload.toString(), (response) -> {
             System.out.println("Clean response is received: " + response);
-            OrderData.notifyListenerToAddOrder(order);
             pd.dismiss();
             Toast.makeText(context, "Payment approved", Toast.LENGTH_SHORT).show();
             consumer.accept(String.valueOf(OrderData.notifyListenerToAddOrder(new Gson().fromJson(input, Order.class))));

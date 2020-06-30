@@ -147,7 +147,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
     public void refreshOrderStatus(Context c, Runnable r) {
         for (Order o : pastOrders) {
-            if (o.getStatus() == Order.CONFIRMED) {
+            if (o.getStatus() == Order.CONFIRMED || o.getStatus() == Order.READY_TO_SERVE) {
                 new Messenger(c, Discoverer.DEVICE_NAME)
                         .post(o.getRestaurantId(),
                                 ResourceURIs.STATUS,

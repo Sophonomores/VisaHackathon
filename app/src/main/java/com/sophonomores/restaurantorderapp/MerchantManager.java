@@ -65,6 +65,10 @@ public class MerchantManager implements OrderData.OrderListener {
         order.setReadyToServe();
     }
 
+    public void markAsCollected(Order order) {
+        order.setCollected();
+    }
+
     @Override
     public int onNewOrder(Order order) {
         order.setId(orderId);
