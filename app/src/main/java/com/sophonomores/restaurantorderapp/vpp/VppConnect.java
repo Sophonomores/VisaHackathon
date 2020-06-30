@@ -72,14 +72,11 @@ public class VppConnect {
             errorCallback.accept(error.networkResponse.statusCode);
         });
 
-        System.out.println("Request object created");
         queue.add(req);
-        System.out.println("Request object has been pushed to the request queue");
     }
 
     // Return empty string and some logging in the case of error
     private static String encryptPayload(String payload) {
-        System.out.println("Encrypting payload...");
         // Define the JWE spec (RSA_OAEP_256 + AES_128_GCM)
         JWEHeader.Builder headerBuilder = new JWEHeader.Builder(
                 JWEAlgorithm.RSA_OAEP_256,
@@ -110,13 +107,11 @@ public class VppConnect {
             ex.printStackTrace();
         }
 
-        System.out.println("Payload has succesfully been encrypted");
         return encryptedPayload;
     }
 
     // Return empty string and some logging in the case of error
     private static String decryptResponse(JSONObject response) {
-        System.out.println("Decrypting response");
         String decryptedData = "";
 
         try {
@@ -137,7 +132,6 @@ public class VppConnect {
             ex.printStackTrace();
         }
 
-        System.out.println("Response has successfully been decrypted");
         return decryptedData;
     }
 }
