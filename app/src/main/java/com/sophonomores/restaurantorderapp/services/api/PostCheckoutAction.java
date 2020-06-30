@@ -28,7 +28,7 @@ public class PostCheckoutAction extends Action {
         Order order = new Gson().fromJson(input, Order.class);
 
         VppAuthorizationPayload payload = new VppAuthorizationPayload();
-        payload.transactionAmount = order.getTotalPrice();
+        // payload.transactionAmount = order.getTotalPrice(); -> Would be necessary in real scenario
 
         CompletableFuture<String> checkoutResponseFuture = new CompletableFuture<>();
 

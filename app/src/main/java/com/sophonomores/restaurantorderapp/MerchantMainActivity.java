@@ -106,6 +106,7 @@ public class MerchantMainActivity extends AppCompatActivity
         // since the function callback will always be called on the Main Thread.
         Executors.newCachedThreadPool().submit(() -> {
             VppAuthorizationPayload payload = new VppAuthorizationPayload();
+            System.out.println(payload.toString());
 
             CompletableFuture<String> checkoutResponseFuture = new CompletableFuture<>();
 
