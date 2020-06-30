@@ -14,11 +14,12 @@ import com.sophonomores.restaurantorderapp.vpp.VppConnect;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 
 public class PostCheckoutAction extends Action {
     @Override
-    public String execute(@Nullable String input) {
+    public void execute(@Nullable String input, Consumer<String> consumer) {
         // TODO: Insert PAN into the payload
         // TODO: Modify the response callback
         Order order = new Gson().fromJson(input, Order.class);
@@ -28,12 +29,11 @@ public class PostCheckoutAction extends Action {
 
         VppConnect.authorize(payload.toString(), (response) -> {
             System.out.println("Clean response is received: " + response);
+            OrderData.notifyListenerToAddOrder(order);
+            consumer.accept(StatusCode.OK);
         }, (statusCode) -> {
             System.out.println("We received this error status code: " + statusCode);
         });
-
-        OrderData.notifyListenerToAddOrder(order);
-        return StatusCode.OK;
     }
 
     public void sendToOrderData (String input) {
