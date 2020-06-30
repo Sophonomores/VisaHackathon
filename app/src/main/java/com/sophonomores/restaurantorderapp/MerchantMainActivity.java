@@ -11,7 +11,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
+import com.sophonomores.restaurantorderapp.services.api.StatusCode;
+import com.sophonomores.restaurantorderapp.vpp.VppAuthorizationPayload;
+import com.sophonomores.restaurantorderapp.vpp.VppConnect;
 import com.sophonomores.restaurantorderapp.vpp.VppRequestQueue;
+
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class MerchantMainActivity extends AppCompatActivity
         implements OrderAdapter.ItemClickListener, MerchantManager.OrderListener {
@@ -89,5 +99,36 @@ public class MerchantMainActivity extends AppCompatActivity
         orderViewAdapter.notifyDataSetChanged();
     }
 
-}
+    // This function is created as a convenient way to test the API
+    // TODO: Remove this function.
+    public void simulateVppPayment(View view) {
+        // This whole process should be done on a different thread
+        // since the function callback will always be called on the Main Thread.
+        Executors.newCachedThreadPool().submit(() -> {
+            VppAuthorizationPayload payload = new VppAuthorizationPayload();
 
+            CompletableFuture<String> checkoutResponseFuture = new CompletableFuture<>();
+
+            VppConnect.authorize(payload.toString(),(response)-> {
+                System.out.println("Clean response is received: " + response);
+                checkoutResponseFuture.complete(StatusCode.OK);
+            },(statusCode)-> {
+                System.out.println("We received this error status code: " + statusCode);
+                checkoutResponseFuture.complete(StatusCode.convert(statusCode));
+            });
+
+            String checkoutResponse;
+            try {
+                System.out.println("I have appeared but waiting!");
+                checkoutResponse = checkoutResponseFuture.get(3, TimeUnit.SECONDS);
+                System.out.println("Finally it came out!!!");
+            } catch (TimeoutException ex) {
+                checkoutResponse = StatusCode.REQUEST_TIMEOUT;
+            } catch (InterruptedException| ExecutionException | CancellationException ex) {
+                checkoutResponse = StatusCode.INTERNAL_SERVER_ERROR;
+            }
+
+            System.out.println("Here is the checkout response!!! " + checkoutResponse);
+        });
+    }
+}
