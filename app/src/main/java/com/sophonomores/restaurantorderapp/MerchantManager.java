@@ -16,6 +16,7 @@ public class MerchantManager implements OrderData.OrderListener {
     private List<Order> orderList;
     private Restaurant restaurant;
     private OrderData orderData;
+    private int orderId = 1;
 
     // register observer
     private OrderListener listener;
@@ -64,10 +65,17 @@ public class MerchantManager implements OrderData.OrderListener {
         order.setReadyToServe();
     }
 
+    public void markAsCollected(Order order) {
+        order.setCollected();
+    }
+
     @Override
-    public void onNewOrder(Order order) {
+    public int onNewOrder(Order order) {
+        order.setId(orderId);
         orderList.add(order);
         listener.onOrderDataChange();
+        orderId++;
+        return order.getId();
     }
 
     // This interface is to register UI to observer changes in the list of orders in
@@ -77,5 +85,11 @@ public class MerchantManager implements OrderData.OrderListener {
 
         // TODO: next sprint - able to update the status of the order
         // void onOrderStatusChange();
+    }
+
+    public int getOrderStatus(int id) {
+        return orderList.stream().filter((Order o) -> {
+            return o.getId() == id;
+        }).findFirst().get().getStatus();
     }
 }

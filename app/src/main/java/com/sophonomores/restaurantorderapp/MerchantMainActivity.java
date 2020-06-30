@@ -54,6 +54,12 @@ public class MerchantMainActivity extends AppCompatActivity
         VppRequestQueue.context = this;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orderViewAdapter.notifyDataSetChanged();
+    }
+
     public static MerchantManager getMerchantManager() {
         return merchantManager;
     }

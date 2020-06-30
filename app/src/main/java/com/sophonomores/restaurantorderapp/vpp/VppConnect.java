@@ -69,7 +69,11 @@ public class VppConnect {
             responseCallback.accept(decryptedResponse);
         }, (Response.ErrorListener) error -> {
             System.out.println("Receive an error code!!!");
-            errorCallback.accept(error.networkResponse.statusCode);
+            if (error.networkResponse == null) {
+                errorCallback.accept(500);
+            } else {
+                errorCallback.accept(error.networkResponse.statusCode);
+            }
         });
 
         queue.add(req);

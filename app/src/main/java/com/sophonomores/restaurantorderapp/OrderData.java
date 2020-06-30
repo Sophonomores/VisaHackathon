@@ -25,9 +25,9 @@ public class OrderData {
         this.listener = listener;
     }
 
-    public static void notifyListenerToAddOrder(Order order) {
-        listener.onNewOrder(order);
-        System.out.println("New order coming from: " +  order.getCustomerName());
+    public static int notifyListenerToAddOrder(Order order) {
+        return listener.onNewOrder(order);
+//        System.out.println("New order coming from: " +  order.getCustomerName());
     }
 
 //    public static List<Order> getConfirmedOrder () {
@@ -53,6 +53,6 @@ public class OrderData {
     // Classes that want to observe changes in the list of orders received
     // should implement this interface to get notified.
     public interface OrderListener {
-        void onNewOrder(Order order);
+        int onNewOrder(Order order);
     }
 }

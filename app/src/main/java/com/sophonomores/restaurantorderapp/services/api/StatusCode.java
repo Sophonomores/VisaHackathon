@@ -7,7 +7,7 @@ public class StatusCode {
     public static final String METHOD_NOT_ALLOWED = "405 Method Not Allowed";
     public static final String REQUEST_TIMEOUT = "408 Request Timeout";
     public static final String INTERNAL_SERVER_ERROR = "500 Internal Server Error";
-    private static final String UNKOWN_ERROR = "Unknown Error";
+    private static final String UNKNOWN_ERROR = "Unknown Error";
 
     /**
      * Converts a status code into its string representation.
@@ -27,7 +27,7 @@ public class StatusCode {
             case 500:
                 return INTERNAL_SERVER_ERROR;
             default:
-                return UNKOWN_ERROR;
+                return UNKNOWN_ERROR;
         }
     }
 }

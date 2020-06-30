@@ -150,7 +150,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         progressDialog = ProgressDialog.show(CartActivity.this, "", "Processing...", true);
         if (RestaurantData.USE_HARDCODED_VALUES) {
             new Handler().postDelayed(() -> {
-                handleCheckoutSuccess(myOrder);
+                handleCheckoutSuccess(myOrder, 0);
             }, 1000);
             return;
         }
@@ -162,16 +162,20 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                             System.out.println("Response: " + response);
                             if(response.equals(StatusCode.PAYMENT_DECLINED)) {
                                 handlePaymentDeclined();
+                                return;
                             }
-                            if(response.equals(StatusCode.OK)) {
-                                handleCheckoutSuccess(myOrder);
+                            if(response.equals(StatusCode.INTERNAL_SERVER_ERROR)) {
+                                handlePaymentFailure();
+                                return;
                             }
+                            handleCheckoutSuccess(myOrder, Integer.parseInt(response));
+
                         });
 //        Intent intent = new Intent(this, PaymentActivity.class);
 //        startActivity(intent);
     }
 
-    private void handleCheckoutSuccess(Order myOrder) {
+    private void handleCheckoutSuccess(Order myOrder, int orderId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your order has been placed!\nWe will notify you shortly when your food is ready.")
                 .setTitle("Order placed")
@@ -179,6 +183,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(CartActivity.this, CustomerMainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    myOrder.setId(orderId);
                     orderManager.addPastOrder(myOrder);
                     orderManager.clearShoppingCart();
                     startActivity(intent);
@@ -193,6 +198,18 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your payment has been declined. Please try again.")
                 .setTitle("Payment declined")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {});
+        AlertDialog dialog = builder.create();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        dialog.show();
+    }
+
+    private void handlePaymentFailure() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        builder.setMessage("Unable to connect to Visa at the moment. Please contact the merchant for more information.")
+                .setTitle("Payment failed")
                 .setCancelable(false)
                 .setPositiveButton("OK", (dialog, which) -> {});
         AlertDialog dialog = builder.create();
