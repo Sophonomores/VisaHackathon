@@ -164,6 +164,10 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                                 handlePaymentDeclined();
                                 return;
                             }
+                            if(response.equals(StatusCode.INTERNAL_SERVER_ERROR)) {
+                                handlePaymentFailure();
+                                return;
+                            }
                             handleCheckoutSuccess(myOrder, Integer.parseInt(response));
 
                         });
@@ -194,6 +198,18 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your payment has been declined. Please try again.")
                 .setTitle("Payment declined")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {});
+        AlertDialog dialog = builder.create();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        dialog.show();
+    }
+
+    private void handlePaymentFailure() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        builder.setMessage("Unable to connect to Visa at the moment. Please contact the merchant for more information.")
+                .setTitle("Payment failed")
                 .setCancelable(false)
                 .setPositiveButton("OK", (dialog, which) -> {});
         AlertDialog dialog = builder.create();

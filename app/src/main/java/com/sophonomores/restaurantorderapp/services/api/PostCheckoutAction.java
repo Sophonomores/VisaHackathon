@@ -42,7 +42,7 @@ public class PostCheckoutAction extends Action {
         }, (statusCode) -> {
             System.out.println("We received this error status code: " + statusCode);
             pd.dismiss();
-            Toast.makeText(context, "Payment declined", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Payment failed", Toast.LENGTH_SHORT).show();
             consumer.accept(StatusCode.convert(statusCode));
         });
     }

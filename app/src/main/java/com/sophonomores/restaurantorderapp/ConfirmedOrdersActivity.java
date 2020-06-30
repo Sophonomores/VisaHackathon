@@ -44,7 +44,7 @@ public class ConfirmedOrdersActivity extends AppCompatActivity {
         });
         new Handler().postDelayed(() -> {
                 progressDialog.dismiss();
-            }, 2500);
+            }, 5000);
     }
 
     @Override

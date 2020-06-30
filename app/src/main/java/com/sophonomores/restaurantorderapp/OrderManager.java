@@ -3,6 +3,7 @@ package com.sophonomores.restaurantorderapp;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
@@ -14,6 +15,7 @@ import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This class handles the main business logic of the customer app.
@@ -114,6 +116,10 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
         return this.pastOrders;
     }
 
+    public Optional<Order> getOrder(int id) {
+        return this.pastOrders.stream().filter((Order o) -> {return o.getId() == id;}).findFirst();
+    }
+
     public void addPastOrder(Order o) {
         this.pastOrders.add(o);
     }
@@ -145,18 +151,31 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
         void onRestaurantsChange();
     }
 
+    // Assume all orders come from one restaurant for demo.
     public void refreshOrderStatus(Context c, Runnable r) {
+        String restaurantId = "";
+        List<Integer> orderIds = new ArrayList<>();
+        boolean sendMsg = false;
         for (Order o : pastOrders) {
             if (o.getStatus() == Order.CONFIRMED || o.getStatus() == Order.READY_TO_SERVE) {
-                new Messenger(c, Discoverer.DEVICE_NAME)
-                        .post(o.getRestaurantId(),
-                                ResourceURIs.STATUS,
-                                String.valueOf(o.getId()),
-                                (String response) -> {
-                                    o.setStatus(Integer.parseInt(response));
-                                    r.run();
-                                });
+                restaurantId = o.getRestaurantId();
+                orderIds.add(o.getId());
+                sendMsg = true;
             }
+        }
+        if (sendMsg) {
+            new Messenger(c, Discoverer.DEVICE_NAME)
+                    .post(restaurantId,
+                            ResourceURIs.STATUS,
+                            new Gson().toJson(orderIds),
+                            (String response) -> {
+                                System.out.println(response);
+                                List<Integer> status = new Gson().fromJson(response, new TypeToken<ArrayList<Integer>>(){}.getType());
+                                for(int i = 0; i < orderIds.size(); i++) {
+                                    getOrder(orderIds.get(i)).get().setStatus(status.get(i));
+                                }
+                                r.run();
+                            });
         }
     }
 }
