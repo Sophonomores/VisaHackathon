@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
+import com.sophonomores.restaurantorderapp.services.Advertiser;
+import com.sophonomores.restaurantorderapp.vpp.VppRequestQueue;
 
 public class MerchantMainActivity extends AppCompatActivity
         implements OrderAdapter.ItemClickListener, MerchantManager.OrderListener {
@@ -27,6 +29,8 @@ public class MerchantMainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_merchant);
+
+        new Advertiser(MerchantMainActivity.this).startAdvertising();
 
         Restaurant restaurant = RestaurantData.makeSteakHouse(); // hardcoded
 
@@ -46,6 +50,8 @@ public class MerchantMainActivity extends AppCompatActivity
         merchantManager.setOrderListener(this);
         merchantManager.startReceivingOrders();
 
+        // Set up the request queue
+        VppRequestQueue.context = this;
     }
 
     @Override
@@ -91,5 +97,4 @@ public class MerchantMainActivity extends AppCompatActivity
     public void onOrderDataChange() {
         orderViewAdapter.notifyDataSetChanged();
     }
-
 }
