@@ -50,6 +50,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private TextView textView;
     private TextView priceTextView;
     private Button checkoutButton;
+    private CheckoutButton visaCheckoutButton;
     private ProgressDialog progressDialog;
 
     private BiometricAuth biometricAuth;
@@ -88,24 +89,22 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         textView = (TextView) findViewById(R.id.textView);
         priceTextView = (TextView) findViewById(R.id.priceTextView);
         checkoutButton = findViewById(R.id.checkout_button);
+        visaCheckoutButton = findViewById(R.id.btn_visa_checkout);
         updateUiComponents();
-        setupCheckoutButton();
     }
 
     private static final String MERCHANT_API_KEY = "ZS3NZWIM8VE6VRIWDTN021sRrCcEVOgUnbX14E59RK3NWZM8Y";
     private static final String VISA_CHECKOUT_PROFILE = "SYSTEMDEFAULT";
 
-    private void setupCheckoutButton() {
+    private void setupVisaCheckoutButton() {
         Profile profile = new Profile.ProfileBuilder(MERCHANT_API_KEY, Environment.SANDBOX)
                 .setProfileName(VISA_CHECKOUT_PROFILE)
                 .build();
 
-        // TODO: Replace Purchas Info with actual value
-        PurchaseInfo purchaseInfo = new PurchaseInfo.PurchaseInfoBuilder(new BigDecimal("10.23"),
-                PurchaseInfo.Currency.USD)
-                .build();
-
-        CheckoutButton visaCheckoutButton = findViewById(R.id.btn_visa_checkout);
+        PurchaseInfo purchaseInfo = new PurchaseInfo.PurchaseInfoBuilder(
+                new BigDecimal(cart.getTotalPrice()),
+                PurchaseInfo.Currency.USD
+        ).build();
 
         visaCheckoutButton.init(this, profile, purchaseInfo, new VisaCheckoutSdk.VisaCheckoutResultListener() {
             @Override
@@ -113,6 +112,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 launchReadyHandler.launch();
             }
 
+            // TODO: Adjust onResult Handler: On the merchant side, need a sort of verification.
             @Override
             public void onResult(VisaPaymentSummary visaPaymentSummary) {
                 if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
@@ -158,7 +158,12 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
             dishAdapter.notifyDataSetChanged();
         textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
         priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
-        checkoutButton.setEnabled(cart.getCount() != 0 && (!USE_BIOMETRIC || biometricAuth.canAuthenticate()));
+        // Reupdate the purchase amount
+        setupVisaCheckoutButton();
+
+        Boolean isCheckoutEnabled = cart.getCount() != 0 && (!USE_BIOMETRIC || biometricAuth.canAuthenticate());
+        checkoutButton.setEnabled(isCheckoutEnabled);
+        visaCheckoutButton.setEnabled(isCheckoutEnabled);
     }
 
     private void prepareDishRecyclerView() {
