@@ -21,7 +21,7 @@ public class RestaurantData {
     private RestaurantsChangeListener listener;
     private Discoverer discoverer;
 
-    public static final boolean USE_HARDCODED_VALUES = true;
+    public static final boolean USE_HARDCODED_VALUES = false;
 
     public RestaurantData(Context context) {
         this.context = context;
@@ -69,6 +69,7 @@ public class RestaurantData {
         westernDishes.add(new Dish("Sirloin", 12.50));
         westernDishes.add(new Dish("Rib eye", 13.50));
         westernDishes.add(new Dish("Angus beef", 14.50));
+        westernDishes.add(new Dish("Vegetable salad", 11.11));
         return new Restaurant("Steak House", "Western", westernDishes, "$$", "Casual");
     }
 

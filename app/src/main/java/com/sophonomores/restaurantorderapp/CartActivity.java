@@ -1,12 +1,5 @@
 package com.sophonomores.restaurantorderapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +11,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.biometricauth.BiometricAuth;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
@@ -160,6 +159,10 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                         ResourceURIs.CHECKOUT,
                         new Gson().toJson(myOrder),
                         (String response) -> {
+                            System.out.println("Response: " + response);
+                            if(response.equals(StatusCode.PAYMENT_DECLINED)) {
+                                handlePaymentDeclined();
+                            }
                             if(response.equals(StatusCode.OK)) {
                                 handleCheckoutSuccess(myOrder);
                             }
@@ -171,7 +174,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private void handleCheckoutSuccess(Order myOrder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your order has been placed!\nWe will notify you shortly when your food is ready.")
-                .setTitle("Order Placed")
+                .setTitle("Order placed")
                 .setCancelable(false)
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(CartActivity.this, CustomerMainActivity.class);
@@ -180,6 +183,18 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                     orderManager.clearShoppingCart();
                     startActivity(intent);
                 });
+        AlertDialog dialog = builder.create();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        dialog.show();
+    }
+
+    private void handlePaymentDeclined() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        builder.setMessage("Your payment has been declined. Please try again.")
+                .setTitle("Payment declined")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {});
         AlertDialog dialog = builder.create();
         if (progressDialog != null)
             progressDialog.dismiss();
