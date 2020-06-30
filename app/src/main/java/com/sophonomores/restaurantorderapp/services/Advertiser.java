@@ -76,7 +76,7 @@ public class Advertiser {
             Request request = Parser.parseRequest(new String(payload.asBytes()));
             String response;
             try {
-                ApiEndpoint.getAction(request.getUri(), request.getMethod()).execute(request.getContent(), (String resp) -> {
+                ApiEndpoint.getAction(request.getUri(), request.getMethod()).execute(request.getContent(), context, (String resp) -> {
                     Payload bytesPayload = Payload.fromBytes(resp.getBytes());
                     Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload);
                 });

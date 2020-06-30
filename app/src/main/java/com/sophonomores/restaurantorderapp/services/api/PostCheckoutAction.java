@@ -1,6 +1,12 @@
 package com.sophonomores.restaurantorderapp.services.api;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.OrderData;
@@ -19,20 +25,27 @@ import java.util.function.Consumer;
 
 public class PostCheckoutAction extends Action {
     @Override
-    public void execute(@Nullable String input, Consumer<String> consumer) {
+    public void execute(@Nullable String input, Context context, Consumer<String> consumer) {
         // TODO: Insert PAN into the payload
         // TODO: Modify the response callback
         Order order = new Gson().fromJson(input, Order.class);
 
         VppAuthorizationPayload payload = new VppAuthorizationPayload();
-        // payload.transactionAmount = order.getTotalPrice(); -> Would be necessary in real scenario
+        if (order.getTotalPrice() == 11.11)
+            payload.transactionAmount = order.getTotalPrice();
 
+        ProgressDialog pd = ProgressDialog.show(context, "", "Processing payment...", true, false);
+        System.out.println("Processing payment...");
         VppConnect.authorize(payload.toString(), (response) -> {
             System.out.println("Clean response is received: " + response);
             OrderData.notifyListenerToAddOrder(order);
+            pd.dismiss();
+            Toast.makeText(context, "Payment approved", Toast.LENGTH_SHORT).show();
             consumer.accept(StatusCode.OK);
         }, (statusCode) -> {
             System.out.println("We received this error status code: " + statusCode);
+            pd.dismiss();
+            Toast.makeText(context, "Payment declined", Toast.LENGTH_SHORT).show();
             consumer.accept(StatusCode.convert(statusCode));
         });
     }

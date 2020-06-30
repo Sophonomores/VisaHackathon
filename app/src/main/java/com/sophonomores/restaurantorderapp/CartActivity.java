@@ -159,6 +159,10 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                         ResourceURIs.CHECKOUT,
                         new Gson().toJson(myOrder),
                         (String response) -> {
+                            System.out.println("Response: " + response);
+                            if(response.equals(StatusCode.PAYMENT_DECLINED)) {
+                                handlePaymentDeclined();
+                            }
                             if(response.equals(StatusCode.OK)) {
                                 handleCheckoutSuccess(myOrder);
                             }
@@ -170,7 +174,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private void handleCheckoutSuccess(Order myOrder) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your order has been placed!\nWe will notify you shortly when your food is ready.")
-                .setTitle("Order Placed")
+                .setTitle("Order placed")
                 .setCancelable(false)
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(CartActivity.this, CustomerMainActivity.class);
@@ -179,6 +183,18 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                     orderManager.clearShoppingCart();
                     startActivity(intent);
                 });
+        AlertDialog dialog = builder.create();
+        if (progressDialog != null)
+            progressDialog.dismiss();
+        dialog.show();
+    }
+
+    private void handlePaymentDeclined() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+        builder.setMessage("Your payment has been declined. Please try again.")
+                .setTitle("Payment declined")
+                .setCancelable(false)
+                .setPositiveButton("OK", (dialog, which) -> {});
         AlertDialog dialog = builder.create();
         if (progressDialog != null)
             progressDialog.dismiss();

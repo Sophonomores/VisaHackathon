@@ -11,17 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
-import com.sophonomores.restaurantorderapp.services.api.StatusCode;
-import com.sophonomores.restaurantorderapp.vpp.VppAuthorizationPayload;
-import com.sophonomores.restaurantorderapp.vpp.VppConnect;
+import com.sophonomores.restaurantorderapp.services.Advertiser;
 import com.sophonomores.restaurantorderapp.vpp.VppRequestQueue;
-
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class MerchantMainActivity extends AppCompatActivity
         implements OrderAdapter.ItemClickListener, MerchantManager.OrderListener {
@@ -38,6 +29,8 @@ public class MerchantMainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_merchant);
+
+        new Advertiser(MerchantMainActivity.this).startAdvertising();
 
         Restaurant restaurant = RestaurantData.makeSteakHouse(); // hardcoded
 
