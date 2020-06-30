@@ -32,6 +32,7 @@ public class PostCheckoutAction extends Action {
             OrderData.notifyListenerToAddOrder(order);
             consumer.accept(StatusCode.OK);
         }, (statusCode) -> {
+            consumer.accept(StatusCode.convert(statusCode));
             System.out.println("We received this error status code: " + statusCode);
         });
     }
