@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -112,17 +111,18 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 launchReadyHandler.launch();
             }
 
-            // TODO: Adjust onResult Handler: On the merchant side, need a sort of verification.
             @Override
             public void onResult(VisaPaymentSummary visaPaymentSummary) {
                 if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
-                    Log.d("AppTag", "Success");
+                    System.out.println("Visa Checkout payment success");
+                    String callId = visaPaymentSummary.getCallId();
+                    // TODO: send callId to merchant.
                 } else if (VisaPaymentSummary.PAYMENT_CANCEL.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
-                    Log.d("AppTag", "Canceled");
+                    System.out.println("Visa Checkout payment canceled");
                 } else if (VisaPaymentSummary.PAYMENT_ERROR.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
-                    Log.d("AppTag", "Error");
+                    System.out.println("Visa Checkout payment error");
                 } else if (VisaPaymentSummary.PAYMENT_FAILURE.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
-                    Log.d("AppTag", "Generic Unknown failure");
+                    System.out.println("Visa Checkout experience a generic unknown failure");
                 }
             }
         });
