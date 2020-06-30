@@ -151,7 +151,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         progressDialog = ProgressDialog.show(CartActivity.this, "", "Processing...", true);
         if (RestaurantData.USE_HARDCODED_VALUES) {
             new Handler().postDelayed(() -> {
-                handleCheckoutSuccess(myOrder);
+                handleCheckoutSuccess(myOrder, 0);
             }, 1000);
             return;
         }
@@ -160,15 +160,16 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                         ResourceURIs.CHECKOUT,
                         new Gson().toJson(myOrder),
                         (String response) -> {
-                            if(response.equals(StatusCode.OK)) {
-                                handleCheckoutSuccess(myOrder);
-                            }
+                            handleCheckoutSuccess(myOrder, Integer.parseInt(response));
+//                            if(response.equals(StatusCode.OK)) {
+//                                handleCheckoutSuccess(myOrder);
+//                            }
                         });
 //        Intent intent = new Intent(this, PaymentActivity.class);
 //        startActivity(intent);
     }
 
-    private void handleCheckoutSuccess(Order myOrder) {
+    private void handleCheckoutSuccess(Order myOrder, int orderId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
         builder.setMessage("Your order has been placed!\nWe will notify you shortly when your food is ready.")
                 .setTitle("Order Placed")
@@ -176,6 +177,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 .setPositiveButton("OK", (dialog, which) -> {
                     Intent intent = new Intent(CartActivity.this, CustomerMainActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    myOrder.setId(orderId);
                     orderManager.addPastOrder(myOrder);
                     orderManager.clearShoppingCart();
                     startActivity(intent);

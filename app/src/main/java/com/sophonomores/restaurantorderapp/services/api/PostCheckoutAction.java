@@ -19,8 +19,8 @@ public class PostCheckoutAction extends Action {
     public String execute(@Nullable String input) {
 
         // sendToOrderData(input);
-        OrderData.notifyListenerToAddOrder(new Gson().fromJson(input, Order.class));
-        return StatusCode.OK;
+        return String.valueOf(OrderData.notifyListenerToAddOrder(new Gson().fromJson(input, Order.class)));
+//        return StatusCode.OK;
     }
 
     public void sendToOrderData (String input) {

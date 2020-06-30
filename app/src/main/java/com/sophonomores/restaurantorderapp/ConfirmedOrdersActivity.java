@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ public class ConfirmedOrdersActivity extends AppCompatActivity {
     private RecyclerView orderRecyclerView;
     private RecyclerView.Adapter orderViewAdapter;
     private RecyclerView.LayoutManager orderLayoutManager;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,14 @@ public class ConfirmedOrdersActivity extends AppCompatActivity {
 
         prepareOrderRecyclerView();
 
+        progressDialog = ProgressDialog.show(ConfirmedOrdersActivity.this, "", "Loading...", true);
+        orderManager.refreshOrderStatus(ConfirmedOrdersActivity.this, () -> {
+            orderViewAdapter.notifyDataSetChanged();
+            progressDialog.dismiss();
+        });
+        new Handler().postDelayed(() -> {
+                progressDialog.dismiss();
+            }, 2500);
     }
 
     @Override

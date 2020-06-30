@@ -16,6 +16,7 @@ public class Order {
     private List<Dish> dishes;
     private String time;
     private int status;
+    private int id;
     // TODO: time of order
 
     private Order (UserProfile customer, Restaurant restaurant, List<Dish> dishes) {
@@ -39,6 +40,10 @@ public class Order {
 
     public String getRestaurantName() {
         return restaurant.getName();
+    }
+
+    public String getRestaurantId() {
+        return restaurant.getEndpointId();
     }
 
     public List<Dish> getDishes() {
@@ -75,8 +80,20 @@ public class Order {
         return this.status;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public void setReadyToServe() {
         this.status = READY_TO_SERVE;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 }

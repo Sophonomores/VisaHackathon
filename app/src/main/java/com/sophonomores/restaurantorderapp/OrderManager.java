@@ -2,11 +2,15 @@ package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.ShoppingCart;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.services.Discoverer;
+import com.sophonomores.restaurantorderapp.services.Messenger;
+import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,5 +143,20 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
     // OrderManager class.
     public interface RestaurantsChangeListener {
         void onRestaurantsChange();
+    }
+
+    public void refreshOrderStatus(Context c, Runnable r) {
+        for (Order o : pastOrders) {
+            if (o.getStatus() == Order.CONFIRMED) {
+                new Messenger(c, Discoverer.DEVICE_NAME)
+                        .post(o.getRestaurantId(),
+                                ResourceURIs.STATUS,
+                                String.valueOf(o.getId()),
+                                (String response) -> {
+                                    o.setStatus(Integer.parseInt(response));
+                                    r.run();
+                                });
+            }
+        }
     }
 }

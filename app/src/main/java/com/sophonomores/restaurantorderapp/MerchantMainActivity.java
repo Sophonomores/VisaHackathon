@@ -48,6 +48,12 @@ public class MerchantMainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        orderViewAdapter.notifyDataSetChanged();
+    }
+
     public static MerchantManager getMerchantManager() {
         return merchantManager;
     }
