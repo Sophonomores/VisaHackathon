@@ -2,11 +2,13 @@ package com.sophonomores.restaurantorderapp;
 
 import android.content.Context;
 
+import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.Order;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MerchantManager implements OrderData.OrderListener {
 
@@ -91,5 +93,19 @@ public class MerchantManager implements OrderData.OrderListener {
         return orderList.stream().filter((Order o) -> {
             return o.getId() == id;
         }).findFirst().get().getStatus();
+    }
+
+    public void pauseDish(String dishName) {
+        restaurant.pauseDish(dishName);
+    }
+
+    public void continueDish(String dishName) {
+        restaurant.continueDish(dishName);
+    }
+
+    public List<Dish> checkOrderAvailability(Order order) {
+        return order.getDishes().stream().filter((Dish d) -> {
+            return !getRestaurant().getDish(d.getName()).getAvailability();
+        }).collect(Collectors.toList());
     }
 }
