@@ -1,11 +1,11 @@
 package com.sophonomores.restaurantorderapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.sophonomores.restaurantorderapp.services.Advertiser;
 

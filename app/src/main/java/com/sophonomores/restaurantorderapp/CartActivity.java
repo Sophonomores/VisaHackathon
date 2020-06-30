@@ -1,16 +1,10 @@
 package com.sophonomores.restaurantorderapp;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +12,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
 import com.sophonomores.restaurantorderapp.biometricauth.BiometricAuth;
 import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
@@ -29,7 +29,14 @@ import com.sophonomores.restaurantorderapp.services.Discoverer;
 import com.sophonomores.restaurantorderapp.services.Messenger;
 import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 import com.sophonomores.restaurantorderapp.services.api.StatusCode;
+import com.visa.checkout.CheckoutButton;
+import com.visa.checkout.Environment;
+import com.visa.checkout.Profile;
+import com.visa.checkout.PurchaseInfo;
+import com.visa.checkout.VisaCheckoutSdk;
+import com.visa.checkout.VisaPaymentSummary;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class CartActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
@@ -82,7 +89,45 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         priceTextView = (TextView) findViewById(R.id.priceTextView);
         checkoutButton = findViewById(R.id.checkout_button);
         updateUiComponents();
+        setupCheckoutButton();
     }
+
+    private static final String MERCHANT_API_KEY = "ZS3NZWIM8VE6VRIWDTN021sRrCcEVOgUnbX14E59RK3NWZM8Y";
+    private static final String VISA_CHECKOUT_PROFILE = "SYSTEMDEFAULT";
+
+    private void setupCheckoutButton() {
+        Profile profile = new Profile.ProfileBuilder(MERCHANT_API_KEY, Environment.SANDBOX)
+                .setProfileName(VISA_CHECKOUT_PROFILE)
+                .build();
+
+        // TODO: Replace Purchas Info with actual value
+        PurchaseInfo purchaseInfo = new PurchaseInfo.PurchaseInfoBuilder(new BigDecimal("10.23"),
+                PurchaseInfo.Currency.USD)
+                .build();
+
+        CheckoutButton visaCheckoutButton = findViewById(R.id.btn_visa_checkout);
+
+        visaCheckoutButton.init(this, profile, purchaseInfo, new VisaCheckoutSdk.VisaCheckoutResultListener() {
+            @Override
+            public void onButtonClick(LaunchReadyHandler launchReadyHandler) {
+                launchReadyHandler.launch();
+            }
+
+            @Override
+            public void onResult(VisaPaymentSummary visaPaymentSummary) {
+                if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    Log.d("AppTag", "Success");
+                } else if (VisaPaymentSummary.PAYMENT_CANCEL.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    Log.d("AppTag", "Canceled");
+                } else if (VisaPaymentSummary.PAYMENT_ERROR.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    Log.d("AppTag", "Error");
+                } else if (VisaPaymentSummary.PAYMENT_FAILURE.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    Log.d("AppTag", "Generic Unknown failure");
+                }
+            }
+        });
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {
