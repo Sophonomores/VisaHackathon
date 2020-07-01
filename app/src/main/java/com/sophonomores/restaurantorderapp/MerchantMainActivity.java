@@ -138,24 +138,6 @@ public class MerchantMainActivity extends AppCompatActivity
     private static final String API_KEY = "ZS3NZWIM8VE6VRIWDTN021sRrCcEVOgUnbX14E59RK3NWZM8Y";
     private static final String SHARED_SECRET = "54m59c}G7ZYYjV14XP-SUaytZd#X0MeYbMug8MWU";
     private static final String CALL_ID = "2983883160161767301";
-    private static final String payload = "{\n" +
-            "   \"orderInfo\": {\n" +
-            "       \"currencyCode\": \"USD\",\n" +
-            "       \"discount\": \"5.25\",\n" +
-            "       \"eventType\": \"Confirm\",\n" +
-            "       \"giftWrap\": \"10.1\",\n" +
-            "       \"misc\": \"3.2\",\n" +
-            "       \"orderId\": \"testorderID\",\n" +
-            "       \"promoCode\": \"testPromoCode\",\n" +
-            "       \"reason\": \"Order Successfully Created\",\n" +
-            "       \"shippingHandling\": \"5.1\",\n" +
-            "       \"subtotal\": \"80.1\",\n" +
-            "       \"tax\": \"7.1\",\n" +
-            "       \"total\": \"101\"\n" +
-            "   }\n" +
-            "}";
-
-    private static final String testPayload = "{\"orderInfo\":{\"currencyCode\":\"USD\",\"eventType\":\"Confirm\",\"total\":\"25.61\"}}";
 
     // TODO: Remove this function into an automated version
     public void simulateUpdateAPI(View view) {
@@ -164,7 +146,7 @@ public class MerchantMainActivity extends AppCompatActivity
             String url = "https://sandbox.api.visa.com/wallet-services-web/payment/info/"
                     + CALL_ID + "?apikey=" + API_KEY;
             System.out.println("Url: " + url);
-            JSONObject jsonData = new JSONObject(testPayload);
+            JSONObject jsonData = new JSONObject(new VisaCheckoutUpdatePayload().toString());
             System.out.println(jsonData.toString());
 
             Response.Listener<JSONObject> listener = response -> {
@@ -213,7 +195,7 @@ public class MerchantMainActivity extends AppCompatActivity
     public static String generateXpaytoken() throws SignatureException {
         String timestamp = String.valueOf(System.currentTimeMillis()/ 1000L);
 
-        String requestBody = testPayload;
+        String requestBody = new VisaCheckoutUpdatePayload().toString();
         String beforeHash = timestamp + RESOURCE_PATH + QUERY_STRING + requestBody;
         System.out.println("Before hash\n" + beforeHash);
         String hash = hmacSha256Digest(beforeHash, SHARED_SECRET);
@@ -244,5 +226,34 @@ public class MerchantMainActivity extends AppCompatActivity
     private static String toHex(byte[] bytes) {
         BigInteger bi = new BigInteger(1, bytes);
         return String.format("%0" + (bytes.length << 1) + "X", bi);
+    }
+}
+
+/**
+ * VisaCheckoutUpdatePayload build the payload for update API.
+ */
+class VisaCheckoutUpdatePayload {
+    enum EventType {
+        confirm("Confirm"), cancel("Cancel");
+
+        // Value is the acceptable value for the json payload.
+        public final String value;
+        EventType(String value) {
+            this.value = value;
+        }
+    }
+
+    public EventType eventType = EventType.confirm;
+    public Double total = 25.61;
+    public String currencyCode = "USD";
+
+    @Override
+    public String toString() {
+        // Note that, there should be no whitespace in payload.
+        // Otherwise, generating x-pay-token will face some issues.
+        return "{\"orderInfo\":" +
+                "{\"currencyCode\":\"" + currencyCode + "\"," +
+                "\"eventType\":\"" + eventType.value + "\"," +
+                "\"total\":\"" + total + "\"}}";
     }
 }
