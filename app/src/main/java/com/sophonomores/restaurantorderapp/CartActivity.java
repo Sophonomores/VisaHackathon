@@ -116,6 +116,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
                     System.out.println("Visa Checkout payment success");
                     String callId = visaPaymentSummary.getCallId();
+                    System.out.println("This is my callID: " + callId);
                     // TODO: send callId to merchant.
                 } else if (VisaPaymentSummary.PAYMENT_CANCEL.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
                     System.out.println("Visa Checkout payment canceled");
