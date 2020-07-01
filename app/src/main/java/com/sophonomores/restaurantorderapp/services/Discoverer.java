@@ -38,7 +38,7 @@ public class Discoverer {
                 .startDiscovery(SERVICE_ID, new ClientDiscoveryCallback(callback), discoveryOptions)
                 .addOnSuccessListener(
                         (Void unused) -> {
-                            System.out.println("We are discovering!");
+                            System.out.println("Discovering nearby merchants...");
                         })
                 .addOnFailureListener(
                         (Exception e) -> {
@@ -55,7 +55,7 @@ public class Discoverer {
 
         @Override
         public void onEndpointFound(@NonNull String endpointId, @NonNull DiscoveredEndpointInfo discoveredEndpointInfo) {
-            String message = String.format("%s: Endpoint found: %s", endpointId, discoveredEndpointInfo.toString());
+            String message = String.format("Endpoint found: %s", endpointId);
             System.out.println(message);
             if (!devices.contains(endpointId)) {
                 devices.add(endpointId);

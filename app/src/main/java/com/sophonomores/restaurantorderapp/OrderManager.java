@@ -169,7 +169,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
                             ResourceURIs.STATUS,
                             new Gson().toJson(orderIds),
                             (String response) -> {
-                                System.out.println(response);
+                                System.out.println("Response: " + response);
                                 List<Integer> status = new Gson().fromJson(response, new TypeToken<ArrayList<Integer>>(){}.getType());
                                 for(int i = 0; i < orderIds.size(); i++) {
                                     getOrder(orderIds.get(i)).get().setStatus(status.get(i));

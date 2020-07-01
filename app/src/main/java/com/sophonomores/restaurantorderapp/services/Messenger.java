@@ -27,6 +27,7 @@ public class Messenger {
 
     public void get(String endpointId, String uri, Consumer<String> callback) {
         String message = "GET:" + uri;
+        System.out.println("Sending request: " + message);
         Nearby.getConnectionsClient(context)
                 .requestConnection(deviceName, endpointId, new ConnectionCallback(message, callback))
                 .addOnFailureListener(
@@ -37,6 +38,7 @@ public class Messenger {
 
     public void post(String endpointId, String uri, String content, Consumer<String> callback) {
         String message = "POST:" + uri + ":" + content;
+        System.out.println("Sending request: " + message);
         Nearby.getConnectionsClient(context)
                 .requestConnection(deviceName, endpointId, new ConnectionCallback(message, callback))
                 .addOnFailureListener(

@@ -53,7 +53,7 @@ public class RestaurantData {
                 r.run();
                 Messenger messenger = new Messenger(context, Discoverer.DEVICE_NAME);
                 messenger.get(endpointId, ResourceURIs.INFO, (String response) -> {
-                    System.out.println("response received: " + response);
+                    System.out.println("Response: " + response);
                     Gson gson = new Gson();
                     Restaurant restaurant = gson.fromJson(response, Restaurant.class);
                     restaurant.setEndpointId(endpointId);

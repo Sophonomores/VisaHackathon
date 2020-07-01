@@ -51,16 +51,13 @@ public class Advertiser {
     private class MerchantConnectionCallback extends ConnectionLifecycleCallback {
         @Override
         public void onConnectionInitiated(@NonNull String endpointId, @NonNull ConnectionInfo connectionInfo) {
-            String message = String.format("%s: Connection initiated: %s", endpointId, connectionInfo.toString());
+            String message = String.format("%s: Connection initiated.", endpointId);
             System.out.println(message);
             Nearby.getConnectionsClient(context).acceptConnection(endpointId, payloadCallback);
         }
 
         @Override
-        public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {
-            String message = String.format("%s: Connection result: %s", endpointId, connectionResolution.toString());
-            System.out.println(message);
-        }
+        public void onConnectionResult(@NonNull String endpointId, @NonNull ConnectionResolution connectionResolution) {}
 
         @Override
         public void onDisconnected(@NonNull String endpointId) {
@@ -71,12 +68,13 @@ public class Advertiser {
     private class MerchantPayloadCallback extends PayloadCallback {
         @Override
         public void onPayloadReceived(@NonNull String endpointId, @NonNull Payload payload) {
-            String message = String.format("%s: Payload received in bytes: %s", endpointId, new String(payload.asBytes()));
+            String message = String.format("%s: Payload received: %s", endpointId, new String(payload.asBytes()));
             System.out.println(message);
             Request request = Parser.parseRequest(new String(payload.asBytes()));
             String response;
             try {
                 ApiEndpoint.getAction(request.getUri(), request.getMethod()).execute(request.getContent(), context, (String resp) -> {
+                    System.out.println(String.format("%s: Sending payload: %s", endpointId, resp));
                     Payload bytesPayload = Payload.fromBytes(resp.getBytes());
                     Nearby.getConnectionsClient(context).sendPayload(endpointId, bytesPayload);
                 });
