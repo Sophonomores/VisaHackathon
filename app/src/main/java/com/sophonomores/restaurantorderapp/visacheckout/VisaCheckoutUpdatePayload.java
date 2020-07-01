@@ -4,7 +4,7 @@ package com.sophonomores.restaurantorderapp.visacheckout;
  * VisaCheckoutUpdatePayload build the payload for update API.
  */
 public class VisaCheckoutUpdatePayload {
-    enum EventType {
+    public enum EventType {
         confirm("Confirm"), cancel("Cancel");
 
         // Value is the acceptable value for the json payload.

@@ -37,6 +37,7 @@ import com.visa.checkout.VisaPaymentSummary;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public class CartActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
 
@@ -53,6 +54,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private ProgressDialog progressDialog;
 
     private BiometricAuth biometricAuth;
+    private Optional<String> callId = Optional.empty();
 
     private static boolean USE_BIOMETRIC = true;
 
@@ -115,9 +117,13 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
             public void onResult(VisaPaymentSummary visaPaymentSummary) {
                 if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
                     System.out.println("Visa Checkout payment success");
-                    String callId = visaPaymentSummary.getCallId();
-                    System.out.println("This is my callID: " + callId);
-                    // TODO: send callId to merchant.
+                    String id = visaPaymentSummary.getCallId();
+                    callId = Optional.of(id);
+                    goToPayment();
+
+                    // Always reset the callId after the payment just so that other order is not
+                    // wrongly identified as visa checkout transaction.
+                    callId = Optional.empty();
                 } else if (VisaPaymentSummary.PAYMENT_CANCEL.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
                     System.out.println("Visa Checkout payment canceled");
                 } else if (VisaPaymentSummary.PAYMENT_ERROR.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
@@ -198,7 +204,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     public void goToPayment() {
         // There is a bug with order manager: the cart should only allow orders from one restaurant.
         Restaurant currentRestaurant = orderManager.getCurrentRestaurant();
-        Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes());
+        Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes(), callId);
         progressDialog = ProgressDialog.show(CartActivity.this, "", "Processing...", true);
         if (RestaurantData.USE_HARDCODED_VALUES) {
             new Handler().postDelayed(() -> {
