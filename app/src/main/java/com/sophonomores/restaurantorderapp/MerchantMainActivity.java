@@ -155,6 +155,8 @@ public class MerchantMainActivity extends AppCompatActivity
             "   }\n" +
             "}";
 
+    private static final String testPayload = "{\"orderInfo\":{\"currencyCode\":\"USD\",\"eventType\":\"Confirm\",\"total\":\"25.61\"}}";
+
     // TODO: Remove this function into an automated version
     public void simulateUpdateAPI(View view) {
         try {
@@ -162,7 +164,7 @@ public class MerchantMainActivity extends AppCompatActivity
             String url = "https://sandbox.api.visa.com/wallet-services-web/payment/info/"
                     + CALL_ID + "?apikey=" + API_KEY;
             System.out.println("Url: " + url);
-            JSONObject jsonData = new JSONObject(payload);
+            JSONObject jsonData = new JSONObject(testPayload);
             System.out.println(jsonData.toString());
 
             Response.Listener<JSONObject> listener = response -> {
@@ -205,21 +207,13 @@ public class MerchantMainActivity extends AppCompatActivity
         }
     }
 
-    private static final String RESOURCE_PATH = "payment/data/" + CALL_ID;
+    private static final String RESOURCE_PATH = "payment/info/" + CALL_ID;
     private static final String QUERY_STRING = "apikey=" + API_KEY;
 
     public static String generateXpaytoken() throws SignatureException {
         String timestamp = String.valueOf(System.currentTimeMillis()/ 1000L);
 
-        String requestBody = payload;
-        try {
-            // Remove new line and space form payload
-            requestBody = new JSONObject(payload).toString();
-            System.out.println("After being sanitized: " + requestBody);
-        } catch (Exception ex) {
-            System.out.println("Something totally wrong!!!");
-        }
-
+        String requestBody = testPayload;
         String beforeHash = timestamp + RESOURCE_PATH + QUERY_STRING + requestBody;
         System.out.println("Before hash\n" + beforeHash);
         String hash = hmacSha256Digest(beforeHash, SHARED_SECRET);
