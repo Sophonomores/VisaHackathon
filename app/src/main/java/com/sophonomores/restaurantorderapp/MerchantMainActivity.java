@@ -125,9 +125,9 @@ public class MerchantMainActivity extends AppCompatActivity
     // TODO: Remove this function into an automated version
     public void simulateUpdateAPI(View view) {
         VisaCheckoutConnect.updateOrder("2983883160161767301", new VisaCheckoutUpdatePayload(), () -> {
-            System.out.println("Update is sucessful");
+            System.out.println("Update is successful");
         }, (errorCode) -> {
-            System.out.println("Received this erro status code: " + errorCode);
+            System.out.println("Received this error status code: " + errorCode);
         });
     }
 }
