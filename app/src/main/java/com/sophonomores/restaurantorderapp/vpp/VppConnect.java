@@ -130,7 +130,6 @@ public class VppConnect {
             encryptedData.decrypt(decrypter);
 
             decryptedData = encryptedData.getPayload().toString();
-            System.out.println("Here is the real payload: " + decryptedData);
         } catch(Exception ex) {
             System.out.println("There is an issue while decrypting response");
             ex.printStackTrace();

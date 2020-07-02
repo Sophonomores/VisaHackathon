@@ -121,7 +121,6 @@ public class CustomerMainActivity extends AppCompatActivity
             progressDialog.dismiss();
         isLoading = false;
         restaurantViewAdapter.notifyDataSetChanged();
-        System.out.println("Restaurant list: " + orderManager.getRestaurantList());
         textView6.setVisibility(orderManager.getRestaurantList().size() == 0 ? View.VISIBLE : View.INVISIBLE);
     }
 

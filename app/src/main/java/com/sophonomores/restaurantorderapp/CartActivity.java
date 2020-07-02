@@ -54,7 +54,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private ProgressDialog progressDialog;
 
     private BiometricAuth biometricAuth;
-    private Optional<String> callId = Optional.empty();
+    private String callId = null;
 
     private static boolean USE_BIOMETRIC = true;
 
@@ -125,12 +125,13 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
                 if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
                     System.out.println("Visa Checkout payment success");
                     String id = visaPaymentSummary.getCallId();
-                    callId = Optional.of(id);
+                    System.out.println("Call id: " + id);
+                    callId = id;
                     goToPayment();
 
                     // Always reset the callId after the payment just so that other order is not
                     // wrongly identified as visa checkout transaction.
-                    callId = Optional.empty();
+                    callId = null;
                 } else if (VisaPaymentSummary.PAYMENT_CANCEL.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
                     System.out.println("Visa Checkout payment canceled");
                 } else if (VisaPaymentSummary.PAYMENT_ERROR.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
