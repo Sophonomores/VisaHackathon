@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sophonomores.restaurantorderapp"
+    package="com.sophonomores.FoodRadar"
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Required for Nearby Connections -->
@@ -26,24 +26,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ConfirmedOrdersActivity" />
-        <activity android:name=".PaymentActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.sophonomores.FoodRadar.ConfirmedOrdersActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.PaymentActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CartActivity" />
-        <activity android:name=".MenuActivity" />
-        <activity android:name=".CustomerMainActivity" />
-        <activity android:name=".MerchantMainActivity" />
-        <activity android:name=".OrderActivity" />
-        <activity android:name=".CardActivity" />
-        <activity android:name=".AddCardActivity" />
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".MerchantMenuActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.CartActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.MenuActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.CustomerMainActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.MerchantMainActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.OrderActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.CardActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.AddCardActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.ProfileActivity" />
+        <activity android:name="com.sophonomores.FoodRadar.MerchantMenuActivity" />
     </application>
 
 </manifest>
