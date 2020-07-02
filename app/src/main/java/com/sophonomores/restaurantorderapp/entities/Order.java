@@ -23,12 +23,12 @@ public class Order {
     // callId is necessary for Visa Checkout.
     // if callId is not empty, it implies that the order is paid using Visa Checkout and
     // could be identified using this id.
-    private Optional<String> callId;
+    private String callId;
 
     private Order (UserProfile customer,
                    Restaurant restaurant,
                    List<Dish> dishes,
-                   Optional<String> callId
+                   String callId
     ) {
         this.customer = customer;
         this.restaurant = restaurant;
@@ -40,7 +40,7 @@ public class Order {
     public static Order confirmOrder (UserProfile customer,
                                       Restaurant restaurant,
                                       List<Dish> dishes,
-                                      Optional<String> callId
+                                      String callId
     ) {
         List<Dish> newDishes = new ArrayList<>();
         newDishes.addAll(dishes);
@@ -50,7 +50,7 @@ public class Order {
     }
 
     public static Order confirmOrder (UserProfile customer, Restaurant restaurant, List<Dish> dishes) {
-        return confirmOrder(customer, restaurant, dishes, Optional.empty());
+        return confirmOrder(customer, restaurant, dishes, null);
     }
 
     public String getCustomerName() {
@@ -119,7 +119,7 @@ public class Order {
         this.id = id;
     }
 
-    public Optional<String> getCallId() {
+    public String getCallId() {
         return callId;
     }
 }

@@ -76,7 +76,7 @@ public class VisaCheckoutConnect {
         // Create token
         String xPayToken;
         try {
-            xPayToken = generateXpaytoken(callId);
+            xPayToken = generateXpaytoken(callId, jsonPayload);
         } catch (SignatureException ex) {
             System.out.println("There is an error while generating token");
             ex.printStackTrace();
@@ -101,10 +101,10 @@ public class VisaCheckoutConnect {
         rq.add(req);
     }
 
-    private static String generateXpaytoken(String callId) throws SignatureException {
+    private static String generateXpaytoken(String callId, JSONObject payload) throws SignatureException {
         String timestamp = String.valueOf(System.currentTimeMillis()/ 1000L);
 
-        String requestBody = new VisaCheckoutUpdatePayload().toString();
+        String requestBody = payload.toString();
         String beforeHash = timestamp + getResourcePath(callId) + QUERY_STRING + requestBody;
         System.out.println("Before hash\n" + beforeHash);
         String hash = hmacSha256Digest(beforeHash, SHARED_SECRET);

@@ -41,7 +41,14 @@ public class PostCheckoutAction extends Action {
             return;
         }
 
-        ProgressDialog pd = ProgressDialog.show(context, "", "Processing payment...", true, false);
+        String message = "Processing payment...";
+        if (order.getCallId() != null) {
+            message = "Contacting Visa Checkout...";
+        } else {
+            message = "Contacting Visa Payments Processing...";
+        }
+
+        ProgressDialog pd = ProgressDialog.show(context, "", message, true, false);
 
         Runnable onSuccess = () -> {
             pd.dismiss();
@@ -56,8 +63,8 @@ public class PostCheckoutAction extends Action {
         };
 
         // If callId is available, it implies the use of Visa Checkout API.
-        if (order.getCallId().isPresent()) {
-            String callId = order.getCallId().get();
+        if (order.getCallId() != null) {
+            String callId = order.getCallId();
             proceedWithVisaCheckout(callId, order, context, consumer, onSuccess, onFailure);
         } else {
             proceedWithVppAPI(order, context, consumer, onSuccess, onFailure);
@@ -98,7 +105,7 @@ public class PostCheckoutAction extends Action {
         payload.total = order.getTotalPrice();
         payload.eventType = VisaCheckoutUpdatePayload.EventType.confirm;
 
-        ProgressDialog pd = ProgressDialog.show(context, "", "Processing payment...", true, false);
+        System.out.println("Processing payment with Visa Checkout...");
         VisaCheckoutConnect.updateOrder(callId, payload, () -> {
             System.out.println("Order confirmation is successful");
             onSuccess.run();

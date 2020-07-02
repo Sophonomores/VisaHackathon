@@ -58,6 +58,8 @@ public class MerchantMainActivity extends AppCompatActivity
         // Set up the request queue
         VppRequestQueue.context = this;
         VisaCheckoutRequestQueue.context = this;
+
+        // simulateUpdateAPI(null);
     }
 
     @Override
@@ -124,7 +126,7 @@ public class MerchantMainActivity extends AppCompatActivity
 
     // TODO: Remove this function into an automated version
     public void simulateUpdateAPI(View view) {
-        VisaCheckoutConnect.updateOrder("2983883160161767301", new VisaCheckoutUpdatePayload(), () -> {
+        VisaCheckoutConnect.updateOrder("7936769825670770202", new VisaCheckoutUpdatePayload(), () -> {
             System.out.println("Update is successful");
         }, (errorCode) -> {
             System.out.println("Received this error status code: " + errorCode);
