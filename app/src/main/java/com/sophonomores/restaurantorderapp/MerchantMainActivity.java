@@ -14,6 +14,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.services.Advertiser;
+import com.sophonomores.restaurantorderapp.visacheckout.VisaCheckoutConnect;
+import com.sophonomores.restaurantorderapp.visacheckout.VisaCheckoutRequestQueue;
+import com.sophonomores.restaurantorderapp.visacheckout.VisaCheckoutUpdatePayload;
 import com.sophonomores.restaurantorderapp.vpp.VppRequestQueue;
 
 public class MerchantMainActivity extends AppCompatActivity
@@ -54,6 +57,7 @@ public class MerchantMainActivity extends AppCompatActivity
 
         // Set up the request queue
         VppRequestQueue.context = this;
+        VisaCheckoutRequestQueue.context = this;
     }
 
     @Override
@@ -116,5 +120,14 @@ public class MerchantMainActivity extends AppCompatActivity
     @Override
     public void onOrderDataChange() {
         orderViewAdapter.notifyDataSetChanged();
+    }
+
+    // TODO: Remove this function into an automated version
+    public void simulateUpdateAPI(View view) {
+        VisaCheckoutConnect.updateOrder("2983883160161767301", new VisaCheckoutUpdatePayload(), () -> {
+            System.out.println("Update is successful");
+        }, (errorCode) -> {
+            System.out.println("Received this error status code: " + errorCode);
+        });
     }
 }

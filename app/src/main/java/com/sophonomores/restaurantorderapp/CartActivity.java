@@ -28,8 +28,16 @@ import com.sophonomores.restaurantorderapp.services.Discoverer;
 import com.sophonomores.restaurantorderapp.services.Messenger;
 import com.sophonomores.restaurantorderapp.services.api.ResourceURIs;
 import com.sophonomores.restaurantorderapp.services.api.StatusCode;
+import com.visa.checkout.CheckoutButton;
+import com.visa.checkout.Environment;
+import com.visa.checkout.Profile;
+import com.visa.checkout.PurchaseInfo;
+import com.visa.checkout.VisaCheckoutSdk;
+import com.visa.checkout.VisaPaymentSummary;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public class CartActivity extends AppCompatActivity implements DishAdapter.ItemClickListener {
 
@@ -42,9 +50,11 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     private TextView textView;
     private TextView priceTextView;
     private Button checkoutButton;
+    private CheckoutButton visaCheckoutButton;
     private ProgressDialog progressDialog;
 
     private BiometricAuth biometricAuth;
+    private Optional<String> callId = Optional.empty();
 
     private static boolean USE_BIOMETRIC = true;
 
@@ -80,8 +90,58 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         textView = (TextView) findViewById(R.id.textView);
         priceTextView = (TextView) findViewById(R.id.priceTextView);
         checkoutButton = findViewById(R.id.checkout_button);
+        visaCheckoutButton = findViewById(R.id.btn_visa_checkout);
+        if (orderManager.getPaymentMode() == OrderManager.USE_OFFLINE_PAYMENT) {
+            checkoutButton.setVisibility(View.VISIBLE);
+            visaCheckoutButton.setVisibility(View.INVISIBLE);
+        } else {
+            checkoutButton.setVisibility(View.INVISIBLE);
+            visaCheckoutButton.setVisibility(View.VISIBLE);
+        }
         updateUiComponents();
     }
+
+    private static final String MERCHANT_API_KEY = "ZS3NZWIM8VE6VRIWDTN021sRrCcEVOgUnbX14E59RK3NWZM8Y";
+    private static final String VISA_CHECKOUT_PROFILE = "SYSTEMDEFAULT";
+
+    private void setupVisaCheckoutButton() {
+        Profile profile = new Profile.ProfileBuilder(MERCHANT_API_KEY, Environment.SANDBOX)
+                .setProfileName(VISA_CHECKOUT_PROFILE)
+                .build();
+
+        PurchaseInfo purchaseInfo = new PurchaseInfo.PurchaseInfoBuilder(
+                new BigDecimal(cart.getTotalPrice()),
+                PurchaseInfo.Currency.USD
+        ).build();
+
+        visaCheckoutButton.init(this, profile, purchaseInfo, new VisaCheckoutSdk.VisaCheckoutResultListener() {
+            @Override
+            public void onButtonClick(LaunchReadyHandler launchReadyHandler) {
+                launchReadyHandler.launch();
+            }
+
+            @Override
+            public void onResult(VisaPaymentSummary visaPaymentSummary) {
+                if (VisaPaymentSummary.PAYMENT_SUCCESS.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    System.out.println("Visa Checkout payment success");
+                    String id = visaPaymentSummary.getCallId();
+                    callId = Optional.of(id);
+                    goToPayment();
+
+                    // Always reset the callId after the payment just so that other order is not
+                    // wrongly identified as visa checkout transaction.
+                    callId = Optional.empty();
+                } else if (VisaPaymentSummary.PAYMENT_CANCEL.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    System.out.println("Visa Checkout payment canceled");
+                } else if (VisaPaymentSummary.PAYMENT_ERROR.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    System.out.println("Visa Checkout payment error");
+                } else if (VisaPaymentSummary.PAYMENT_FAILURE.equalsIgnoreCase(visaPaymentSummary.getStatusName())) {
+                    System.out.println("Visa Checkout experience a generic unknown failure");
+                }
+            }
+        });
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -112,7 +172,12 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
             dishAdapter.notifyDataSetChanged();
         textView.setVisibility(cart.getCount() == 0 ? View.VISIBLE : View.INVISIBLE);
         priceTextView.setText(String.format("$%.2f", cart.getTotalPrice()));
-        checkoutButton.setEnabled(cart.getCount() != 0 && (!USE_BIOMETRIC || biometricAuth.canAuthenticate()));
+        // Reupdate the purchase amount
+        setupVisaCheckoutButton();
+
+        Boolean isCheckoutEnabled = cart.getCount() != 0 && (!USE_BIOMETRIC || biometricAuth.canAuthenticate());
+        checkoutButton.setEnabled(isCheckoutEnabled);
+        visaCheckoutButton.setEnabled(isCheckoutEnabled);
     }
 
     private void prepareDishRecyclerView() {
@@ -146,7 +211,7 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
     public void goToPayment() {
         // There is a bug with order manager: the cart should only allow orders from one restaurant.
         Restaurant currentRestaurant = orderManager.getCurrentRestaurant();
-        Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes());
+        Order myOrder = Order.confirmOrder(orderManager.getUser(), currentRestaurant, cart.getDishes(), callId);
         progressDialog = ProgressDialog.show(CartActivity.this, "", "Processing...", true);
         if (RestaurantData.USE_HARDCODED_VALUES) {
             new Handler().postDelayed(() -> {
