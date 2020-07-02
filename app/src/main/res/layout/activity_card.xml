@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="My digital wallet"
+            android:text="Cards saved in the app"
             android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="sans"
@@ -108,7 +108,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="My digital wallet (no Internet required)"
+                android:text="Cards saved in the app (no Internet required)"
                 android:textSize="17sp" />
 
             <RadioButton
