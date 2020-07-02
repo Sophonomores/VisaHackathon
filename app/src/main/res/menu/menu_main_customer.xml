@@ -11,6 +11,6 @@
         app:showAsAction="collapseActionView" />
     <item
         android:id="@+id/action_card"
-        android:title="Manage cards"
+        android:title="Payment methods"
         app:showAsAction="collapseActionView" />
 </menu>

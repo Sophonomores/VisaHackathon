@@ -91,6 +91,13 @@ public class CartActivity extends AppCompatActivity implements DishAdapter.ItemC
         priceTextView = (TextView) findViewById(R.id.priceTextView);
         checkoutButton = findViewById(R.id.checkout_button);
         visaCheckoutButton = findViewById(R.id.btn_visa_checkout);
+        if (orderManager.getPaymentMode() == OrderManager.USE_OFFLINE_PAYMENT) {
+            checkoutButton.setVisibility(View.VISIBLE);
+            visaCheckoutButton.setVisibility(View.INVISIBLE);
+        } else {
+            checkoutButton.setVisibility(View.INVISIBLE);
+            visaCheckoutButton.setVisibility(View.VISIBLE);
+        }
         updateUiComponents();
     }
 
