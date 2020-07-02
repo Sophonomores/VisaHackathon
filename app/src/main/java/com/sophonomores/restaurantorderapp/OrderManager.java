@@ -23,6 +23,9 @@ import java.util.Optional;
  */
 public class OrderManager implements RestaurantData.RestaurantsChangeListener {
 
+    public static int USE_OFFLINE_PAYMENT = 0;
+    public static int USE_VISA_CHECKOUT = 1;
+
     // enforce Singleton pattern
     private static OrderManager instance;
 
@@ -32,6 +35,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
     private ShoppingCart cart;
     private RestaurantData restaurantData;
     private List<Order> pastOrders;
+    private int paymentMode;
 
     // register observer
     private RestaurantsChangeListener listener;
@@ -42,6 +46,7 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
         this.user = null;
         this.cart = new ShoppingCart();
         this.pastOrders = new ArrayList<>();
+        this.paymentMode = 0;
     }
 
     public void startSearchingForRestaurants(Runnable r) {
@@ -177,5 +182,13 @@ public class OrderManager implements RestaurantData.RestaurantsChangeListener {
                                 r.run();
                             });
         }
+    }
+
+    public int getPaymentMode() {
+        return this.paymentMode;
+    }
+
+    public void setPaymentMode(int mode) {
+        this.paymentMode = mode;
     }
 }

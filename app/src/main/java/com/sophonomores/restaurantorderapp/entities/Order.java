@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class Order {
 
@@ -19,19 +20,37 @@ public class Order {
     private int id;
     // TODO: time of order
 
-    private Order (UserProfile customer, Restaurant restaurant, List<Dish> dishes) {
+    // callId is necessary for Visa Checkout.
+    // if callId is not empty, it implies that the order is paid using Visa Checkout and
+    // could be identified using this id.
+    private Optional<String> callId;
+
+    private Order (UserProfile customer,
+                   Restaurant restaurant,
+                   List<Dish> dishes,
+                   Optional<String> callId
+    ) {
         this.customer = customer;
         this.restaurant = restaurant;
         this.dishes = dishes;
         this.status = CONFIRMED;
+        this.callId = callId;
+    }
+
+    public static Order confirmOrder (UserProfile customer,
+                                      Restaurant restaurant,
+                                      List<Dish> dishes,
+                                      Optional<String> callId
+    ) {
+        List<Dish> newDishes = new ArrayList<>();
+        newDishes.addAll(dishes);
+        Order order = new Order(customer, restaurant, newDishes, callId);
+        order.setOrderTime(new SimpleDateFormat("HH:mm").format(new Date()));
+        return order;
     }
 
     public static Order confirmOrder (UserProfile customer, Restaurant restaurant, List<Dish> dishes) {
-        List<Dish> newDishes = new ArrayList<>();
-        newDishes.addAll(dishes);
-        Order order = new Order(customer, restaurant, newDishes);
-        order.setOrderTime(new SimpleDateFormat("HH:mm").format(new Date()));
-        return order;
+        return confirmOrder(customer, restaurant, dishes, Optional.empty());
     }
 
     public String getCustomerName() {
@@ -100,4 +119,7 @@ public class Order {
         this.id = id;
     }
 
+    public Optional<String> getCallId() {
+        return callId;
+    }
 }

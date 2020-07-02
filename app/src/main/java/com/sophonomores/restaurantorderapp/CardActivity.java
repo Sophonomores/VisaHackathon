@@ -1,16 +1,21 @@
 package com.sophonomores.restaurantorderapp;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class CardActivity extends AppCompatActivity {
+    private RadioGroup radioGroup;
+    private RadioButton visaButton;
+    private RadioButton offlineButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,9 +23,27 @@ public class CardActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setTitle("My Cards");
+        getSupportActionBar().setTitle("Payment Methods");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        radioGroup = findViewById(R.id.radioGroup);
+        visaButton = findViewById(R.id.radioButton);
+        offlineButton = findViewById(R.id.radioButton2);
+        if (OrderManager.getInstance().getPaymentMode() == OrderManager.USE_OFFLINE_PAYMENT) {
+            offlineButton.setChecked(true);
+            visaButton.setChecked(false);
+        } else {
+            offlineButton.setChecked(false);
+            visaButton.setChecked(true);
+        }
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioButton2) {
+                OrderManager.getInstance().setPaymentMode(OrderManager.USE_OFFLINE_PAYMENT);
+            } else {
+                OrderManager.getInstance().setPaymentMode(OrderManager.USE_VISA_CHECKOUT);
+            }
+        });
     }
 
     @Override

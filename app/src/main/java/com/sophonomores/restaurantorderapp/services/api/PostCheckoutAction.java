@@ -14,6 +14,8 @@ import com.sophonomores.restaurantorderapp.entities.Dish;
 import com.sophonomores.restaurantorderapp.entities.Order;
 import com.sophonomores.restaurantorderapp.entities.Restaurant;
 import com.sophonomores.restaurantorderapp.entities.UserProfile;
+import com.sophonomores.restaurantorderapp.visacheckout.VisaCheckoutConnect;
+import com.sophonomores.restaurantorderapp.visacheckout.VisaCheckoutUpdatePayload;
 import com.sophonomores.restaurantorderapp.vpp.VppAuthorizationPayload;
 import com.sophonomores.restaurantorderapp.vpp.VppConnect;
 
@@ -26,7 +28,6 @@ public class PostCheckoutAction extends Action {
     @Override
     public void execute(@Nullable String input, Context context, Consumer<String> consumer) {
         // TODO: Insert PAN into the payload
-        // TODO: Modify the response callback
         Order order = new Gson().fromJson(input, Order.class);
         MerchantManager manager = MerchantManager.getInstance();
         List<Dish> unavailableItems = manager.checkOrderAvailability(order);
@@ -40,21 +41,70 @@ public class PostCheckoutAction extends Action {
             return;
         }
 
-        VppAuthorizationPayload payload = new VppAuthorizationPayload();
-        if (order.getTotalPrice() == 11.11)
-            payload.transactionAmount = order.getTotalPrice();
-
         ProgressDialog pd = ProgressDialog.show(context, "", "Processing payment...", true, false);
-        System.out.println("Processing payment...");
-        VppConnect.authorize(payload.toString(), (response) -> {
+
+        Runnable onSuccess = () -> {
             pd.dismiss();
             Toast.makeText(context, "Payment approved", Toast.LENGTH_SHORT).show();
-            consumer.accept(String.valueOf(OrderData.notifyListenerToAddOrder(new Gson().fromJson(input, Order.class))));
-        }, (statusCode) -> {
-            System.out.println("We received this error status code: " + statusCode);
+            consumer.accept(String.valueOf(OrderData.notifyListenerToAddOrder(order)));
+        };
+
+        Consumer<Integer> onFailure = (statusCode) -> {
             pd.dismiss();
             Toast.makeText(context, "Payment failed", Toast.LENGTH_SHORT).show();
             consumer.accept(StatusCode.convert(statusCode));
+        };
+
+        // If callId is available, it implies the use of Visa Checkout API.
+        if (order.getCallId().isPresent()) {
+            String callId = order.getCallId().get();
+            proceedWithVisaCheckout(callId, order, context, consumer, onSuccess, onFailure);
+        } else {
+            proceedWithVppAPI(order, context, consumer, onSuccess, onFailure);
+        }
+    }
+
+    private void proceedWithVppAPI(Order order,
+                                   Context context,
+                                   Consumer<String> consumer,
+                                   Runnable onSuccess,
+                                   Consumer<Integer> onFailure
+    ) {
+        VppAuthorizationPayload payload = new VppAuthorizationPayload();
+
+        // To demonstrate a decline payment
+        if (order.getTotalPrice() == 11.11)
+            payload.transactionAmount = order.getTotalPrice();
+
+        System.out.println("Processing payment with VPP...");
+        VppConnect.authorize(payload.toString(), (response) -> {
+            System.out.println("Clean response is received: " + response);
+            onSuccess.run();
+        }, (statusCode) -> {
+            System.out.println("We received this error status code: " + statusCode);
+            onFailure.accept(statusCode);
+        });
+    }
+
+    private void proceedWithVisaCheckout(
+            String callId,
+            Order order,
+            Context context,
+            Consumer<String> consumer,
+            Runnable onSuccess,
+            Consumer<Integer> onFailure
+    ) {
+        VisaCheckoutUpdatePayload payload = new VisaCheckoutUpdatePayload();
+        payload.total = order.getTotalPrice();
+        payload.eventType = VisaCheckoutUpdatePayload.EventType.confirm;
+
+        ProgressDialog pd = ProgressDialog.show(context, "", "Processing payment...", true, false);
+        VisaCheckoutConnect.updateOrder(callId, payload, () -> {
+            System.out.println("Order confirmation is successful");
+            onSuccess.run();
+        }, (statusCode) -> {
+            System.out.println("Received this error status code: " + statusCode);
+            onFailure.accept(statusCode);
         });
     }
 
