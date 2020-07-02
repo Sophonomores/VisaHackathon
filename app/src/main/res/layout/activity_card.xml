@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Cards for offline payment"
+            android:text="Cards saved in the app"
             android:textSize="18sp"
             android:textStyle="bold"
             android:typeface="sans"
@@ -49,7 +49,7 @@
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
-            android:layout_height="160dp"
+            android:layout_height="145dp"
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -108,14 +108,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Use offline payment"
+                android:text="Cards saved in the app (no Internet required)"
                 android:textSize="17sp" />
 
             <RadioButton
                 android:id="@+id/radioButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Use Visa Checkout"
+                android:text="Visa Checkout"
                 android:textSize="17sp" />
         </RadioGroup>
     </androidx.constraintlayout.widget.ConstraintLayout>
